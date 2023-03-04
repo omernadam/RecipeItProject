@@ -19,19 +19,19 @@
         tools:layout_editor_absoluteY="146dp" />
 
     <TextView
-        android:id="@+id/username_tv"
+        android:id="@+id/email_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:text="UserName"
+        android:text="Email"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/username_field"
+        app:layout_constraintEnd_toStartOf="@+id/email_et"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <EditText
-        android:id="@+id/username_field"
+        android:id="@+id/email_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
@@ -39,7 +39,7 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/username_tv"
+        app:layout_constraintStart_toEndOf="@+id/email_tv"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <TextView
@@ -49,13 +49,13 @@
         android:layout_marginTop="40dp"
         android:text="Password"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/password_field"
+        app:layout_constraintEnd_toStartOf="@+id/password_et"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/email_tv" />
 
     <EditText
-        android:id="@+id/password_field"
+        android:id="@+id/password_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -64,7 +64,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/password_tv"
-        app:layout_constraintTop_toBottomOf="@+id/username_field" />
+        app:layout_constraintTop_toBottomOf="@+id/email_et" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/login_btn"

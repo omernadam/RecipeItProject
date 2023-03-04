@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "224427330926",
+    "project_id": "recipeit-332fa",
+    "storage_bucket": "recipeit-332fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224427330926:android:8af0cb0782c147c3c9457f",
+        "android_client_info": {
+          "package_name": "com.example.recipeitproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224427330926-kj1l87b19j82guekvmfj847vv5d5cplu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf8BeuB1-JEHfHnsDuIa_FcCZElMGvtcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224427330926-kj1l87b19j82guekvmfj847vv5d5cplu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
