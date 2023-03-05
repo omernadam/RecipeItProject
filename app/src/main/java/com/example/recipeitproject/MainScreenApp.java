@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.Recipe;
+import com.example.recipeitproject.model.User;
 
 import java.util.List;
 
@@ -26,14 +27,15 @@ public class MainScreenApp extends AppCompatActivity {
     List<Recipe> data;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen_app);
 
-        Button profile = findViewById(R.id.profile_btn);
-        profile.setText("O");
+        Button profileBtn = findViewById(R.id.profile_btn);
+        User user = Model.instance().getCurrentUser();
+        String profileNickname = String.valueOf(user.getUsername().charAt(0));
+        profileBtn.setText(profileNickname);
 
         createDropList();
 
@@ -41,14 +43,12 @@ public class MainScreenApp extends AppCompatActivity {
         data = Model.instance().getAllRecipes();
 
 
-        RecyclerView list =findViewById(R.id.recycle_list);
+        RecyclerView list = findViewById(R.id.recycle_list);
         list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(this));
 
-       RecipeRecyclerAdapter adapter = new RecipeRecyclerAdapter(getLayoutInflater(),data);
-       list.setAdapter(adapter);
-
-
+        RecipeRecyclerAdapter adapter = new RecipeRecyclerAdapter(getLayoutInflater(), data);
+        list.setAdapter(adapter);
 
 
         adapter.setOnItemClickLisetner(new RecipeRecyclerAdapter.OnItemClickListener() {

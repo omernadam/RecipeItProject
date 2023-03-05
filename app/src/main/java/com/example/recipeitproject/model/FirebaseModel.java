@@ -32,13 +32,17 @@ public class FirebaseModel {
         auth = FirebaseAuth.getInstance();
     }
 
-    public void getLoggedInUser(Model.Listener<User> callback) {
+    private Task<QuerySnapshot> getUserByEmail(String email) {
+        return db.collection(User.COLLECTION)
+                .whereEqualTo(User.EMAIL, email)
+                .get();
+    }
+
+    public void fetchLoggedInUser(Model.Listener<User> callback) {
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             String email = currentUser.getEmail();
-            db.collection(User.COLLECTION)
-                    .whereEqualTo(User.EMAIL, email)
-                    .get()
+            getUserByEmail(email)
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -57,7 +61,6 @@ public class FirebaseModel {
     }
 
     public void createUser(User user, Model.Listener<Void> listener) {
-        String username = user.getUsername();
         String email = user.getEmail();
         String password = user.getPassword();
 
@@ -66,7 +69,7 @@ public class FirebaseModel {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            db.collection(User.COLLECTION).document(username).set(user.toJson())
+                            db.collection(User.COLLECTION).document(email).set(user.toJson())
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -87,7 +90,23 @@ public class FirebaseModel {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            success.onComplete(null);
+                            getUserByEmail(email)
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            User user = null;
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                                                Map<String, Object> data = document.getData();
+                                                if (data != null) {
+                                                    user = User.fromJson(data);
+
+                                                }
+                                                Model.instance().setCurrentUser(user);
+                                            }
+                                            success.onComplete(null);
+                                        }
+                                    });
                         } else {
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
                             error.onComplete(null);

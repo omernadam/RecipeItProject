@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 public class Model {
     private static final Model _instance = new Model();
@@ -52,24 +53,35 @@ public class Model {
         data.add(rc);
     }
 
-    public User getCurrentUser(Listener<Void> listener) {
+    public void fetchLoggedUser(Listener<Void> listener) {
         executor.execute(() -> {
-            firebaseModel.getLoggedInUser(user -> {
+            firebaseModel.fetchLoggedInUser(user -> {
                 loggedUser = user;
                 if (user != null) {
                     listener.onComplete(null);
                 }
             });
         });
+    }
 
+    public User getCurrentUser() {
         return loggedUser;
+    }
+
+    public void setCurrentUser(User user) {
+        loggedUser = user;
     }
 
     public void createUser(User user, Listener<Void> listener) {
         firebaseModel.createUser(user, (Void) -> {
+            setCurrentUser(user);
             listener.onComplete(null);
         });
     }
+
+
+
+
 
     public void loginUser(String email, String password, Listener<Void> onSuccess, Listener<Void> onError) {
         firebaseModel.loginUser(email, password,
