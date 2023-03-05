@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -18,36 +20,47 @@ import com.example.recipeitproject.model.Recipe;
 import java.util.List;
 
 class RecipeViewHolder extends RecyclerView.ViewHolder {
-    TextView title_rh;
-    ImageView image_src_rh;
+    TextView title_tv;
+    ImageView image_src_iv;
+    TextView category_tv;
+    TextView description_tv;
+    ImageButton edit_button;
+    List<Recipe> data;
 
-    public RecipeViewHolder(@NonNull View itemView, RecipeRecyclerAdapter.OnItemClickListener listener) {
+
+    public RecipeViewHolder(@NonNull View itemView, RecipeRecyclerAdapter.OnItemClickListener listener,List<Recipe> data, Boolean flag) {
         super(itemView);
 
-        title_rh = itemView.findViewById(R.id.recipe_detail_list_title);
-        image_src_rh=itemView.findViewById(R.id.recipe_detail_list_image);
 
+
+
+        title_tv = itemView.findViewById(R.id.my_recipe_row_title_tv);
+        image_src_iv = itemView.findViewById(R.id.my_recipe_row_image);
+        category_tv = itemView.findViewById(R.id.my_recipe_row_category);
+        description_tv = itemView.findViewById(R.id.my_recipe_row_description);
+        edit_button = itemView.findViewById(R.id.my_recipe_row_edit_btn);
+
+        if(flag)
+            edit_button.setVisibility(View.INVISIBLE);
+
+        this.data=data;
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int pos = getAdapterPosition();
                 listener.onItemClick(pos);
-
             }
         });
-
-
     }
+
     public void bind(Recipe rc, int pos) {
-        title_rh.setText(rc.title);
-        image_src_rh.setImageResource(0);
+        title_tv.setText(rc.title);
+        image_src_iv.setImageResource(0);
+        category_tv.setText(rc.category);
+        description_tv.setText(rc.description);
     }
-
 }
-
-
-
 
 public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder>{
     OnItemClickListener listener;
@@ -57,18 +70,20 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder
 
     LayoutInflater inflater;
     List<Recipe> data;
+    Boolean flag;
 
     public void setData(List<Recipe> data){
         this.data = data;
         notifyDataSetChanged();
     }
 
-    public RecipeRecyclerAdapter(LayoutInflater inflater, List<Recipe> data){
+    public RecipeRecyclerAdapter(LayoutInflater inflater, List<Recipe> data, Boolean flag){
         this.inflater = inflater;
         this.data = data;
+        this.flag = flag;
     }
 
-    void setOnItemClickLisetner(OnItemClickListener listener){
+    void setOnItemClickListener(OnItemClickListener listener){
         this.listener=listener;
     }
 
@@ -76,9 +91,8 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = inflater.inflate(R.layout.activity_recipe_detail_list, parent, false);
-        return new RecipeViewHolder(view, listener);
+        View view = inflater.inflate(R.layout.activity_my_recipe_row, parent, false);
+        return new RecipeViewHolder(view, listener,data, flag);
     }
 
     @Override
@@ -92,7 +106,6 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder
         if (data == null) return 0;
         return data.size();
     }
-
 }
 
 
