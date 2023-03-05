@@ -27,6 +27,7 @@ public class LoginScreen extends AppCompatActivity {
 
         Model.instance().fetchLoggedUser(unused -> {
             startActivity(mainScreenIntent);
+            finish();
         });
 
         loginBtn.setOnClickListener(view -> {
@@ -56,6 +57,7 @@ public class LoginScreen extends AppCompatActivity {
 
         signUpBtn.setOnClickListener(view -> {
             startActivity(signUpIntent);
+            finish();
         });
     }
 }

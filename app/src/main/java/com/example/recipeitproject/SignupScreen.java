@@ -35,6 +35,7 @@ public class SignupScreen extends AppCompatActivity {
                 User user = new User(username, email, password);
                 Model.instance().createUser(user, (unused) -> {
                     startActivity(mainScreenIntent);
+                    finish();
                 });
             } else {
                 if (username.length() == 0) {
@@ -52,6 +53,7 @@ public class SignupScreen extends AppCompatActivity {
 
         loginBtn.setOnClickListener(view -> {
             startActivity(loginIntent);
+            finish();
         });
     }
 }
