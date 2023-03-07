@@ -17,6 +17,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures{
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -42,4 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-auth-ktx'
+    def fragment_version = "1.5.5"
+    implementation "androidx.fragment:fragment:$fragment_version"
+
 }
