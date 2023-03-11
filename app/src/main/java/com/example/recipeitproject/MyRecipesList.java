@@ -1,29 +1,17 @@
 package com.example.recipeitproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.widget.Button;
 
-import com.example.recipeitproject.model.Model;
-import com.example.recipeitproject.model.User;
-
-public class MainScreenApp extends AppCompatActivity {
-
+public class MyRecipesList extends AppCompatActivity {
     Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_screen_app);
-
+        setContentView(R.layout.activity_my_recipes_list);
         bundle = new Bundle();
-        bundle.putBoolean(FragmentRecipesViewer.IS_IN_HOME_SCREEN, true);
-
-        Button profileBtn = findViewById(R.id.profile_btn);
-        User user = Model.instance().getCurrentUser();
-        String profileNickname = String.valueOf(user.getUsername().charAt(0));
-        profileBtn.setText(profileNickname);
+        bundle.putBoolean(FragmentRecipesViewer.IS_IN_HOME_SCREEN, false);
 
         if (savedInstanceState == null) {
             FragmentRecipesViewer fragment = new FragmentRecipesViewer();

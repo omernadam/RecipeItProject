@@ -13,6 +13,14 @@
         android:theme="@style/Theme.RecipeItProject"
         tools:targetApi="31">
         <activity
+            android:name=".MyRecipesList"
+            android:exported="true" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+        </activity>
+        <activity
             android:name=".my_recipe_edit_screen"
             android:exported="true">
             <meta-data
@@ -31,7 +39,7 @@
 
         </activity>
         <activity
-            android:name=".my_profile_screen"
+            android:name=".myProfileScreen"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
@@ -50,6 +58,8 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
+
         </activity>
         <activity
             android:name=".SignupScreen"

@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.recipeitproject.model.Model;
-import com.example.recipeitproject.model.User;
 
 public class LoginScreen extends AppCompatActivity {
 
@@ -25,15 +24,17 @@ public class LoginScreen extends AppCompatActivity {
 
         Intent signUpIntent = new Intent(this, SignupScreen.class);
         Intent mainScreenIntent = new Intent(this, MainScreenApp.class);
+        Intent intent = new Intent(this, MyRecipesList.class);
 
+        Model.instance().fetchUsers(usersByIds -> {
+                    Model.instance().setUsersByIds(usersByIds);
+                }
+        );
 
-        User currentUser = Model.instance().getCurrentUser(unused -> {
-            startActivity(mainScreenIntent);
+        Model.instance().fetchLoggedUser(unused -> {
+            startActivity(intent);
+            finish();
         });
-        System.out.println(currentUser);
-        if (currentUser != null) {
-            startActivity(mainScreenIntent);
-        }
 
         loginBtn.setOnClickListener(view -> {
             String email = emailEt.getText().toString();
@@ -62,6 +63,7 @@ public class LoginScreen extends AppCompatActivity {
 
         signUpBtn.setOnClickListener(view -> {
             startActivity(signUpIntent);
+            finish();
         });
     }
 }

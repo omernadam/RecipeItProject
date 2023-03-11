@@ -4,81 +4,99 @@ package com.example.recipeitproject;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.Recipe;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 class RecipeViewHolder extends RecyclerView.ViewHolder {
-    TextView title_rh;
-    ImageView image_src_rh;
+    TextView titleTv;
+    ImageView image;
+    TextView categoryTv;
+    TextView descriptionTv;
+    ImageButton editButton;
+    List<Recipe> data;
 
-    public RecipeViewHolder(@NonNull View itemView, RecipeRecyclerAdapter.OnItemClickListener listener) {
+
+    public RecipeViewHolder(@NonNull View itemView, RecipeRecyclerAdapter.OnItemClickListener listener, List<Recipe> data, Boolean isInHomeScreen) {
         super(itemView);
 
-        title_rh = itemView.findViewById(R.id.recipe_detail_list_title);
-        image_src_rh=itemView.findViewById(R.id.recipe_detail_list_image);
 
+        titleTv = itemView.findViewById(R.id.my_recipe_row_title_tv);
+        image = itemView.findViewById(R.id.my_recipe_row_image);
+        categoryTv = itemView.findViewById(R.id.my_recipe_row_category);
+        descriptionTv = itemView.findViewById(R.id.my_recipe_row_description);
+        editButton = itemView.findViewById(R.id.my_recipe_row_edit_btn);
+
+        if (isInHomeScreen) {
+            editButton.setVisibility(View.INVISIBLE);
+        } else {
+//            disappear user name
+//            titleTv.setVisibility(View.INVISIBLE);
+        }
+
+        this.data = data;
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int pos = getAdapterPosition();
                 listener.onItemClick(pos);
-
             }
         });
-
-
-    }
-    public void bind(Recipe rc, int pos) {
-        title_rh.setText(rc.title);
-        image_src_rh.setImageResource(0);
     }
 
+    public void bind(Recipe recipe, int pos) {
+        titleTv.setText(recipe.getTitle());
+        categoryTv.setText(recipe.getCategoryName());
+        descriptionTv.setText(recipe.getDescription());
+        if (recipe.getImageUrl() != null && recipe.getImageUrl().length() > 5) {
+            Picasso.get().load(recipe.getImageUrl()).placeholder(R.drawable.noimage).into(image);
+        } else {
+            image.setImageResource(R.drawable.noimage);
+        }
+    }
 }
 
-
-
-
-public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder>{
+public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     OnItemClickListener listener;
-    public interface OnItemClickListener{
+
+    public interface OnItemClickListener {
         void onItemClick(int pos);
     }
 
     LayoutInflater inflater;
     List<Recipe> data;
+    Boolean isInHomeScreen;
 
-    public void setData(List<Recipe> data){
+    public void setData(List<Recipe> data) {
         this.data = data;
         notifyDataSetChanged();
     }
 
-    public RecipeRecyclerAdapter(LayoutInflater inflater, List<Recipe> data){
+    public RecipeRecyclerAdapter(LayoutInflater inflater, List<Recipe> data, Boolean isInHomeScreen) {
         this.inflater = inflater;
         this.data = data;
+        this.isInHomeScreen = isInHomeScreen;
     }
 
-    void setOnItemClickLisetner(OnItemClickListener listener){
-        this.listener=listener;
+    void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
 
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = inflater.inflate(R.layout.activity_recipe_detail_list, parent, false);
-        return new RecipeViewHolder(view, listener);
+        View view = inflater.inflate(R.layout.activity_my_recipe_row, parent, false);
+        return new RecipeViewHolder(view, listener, data, isInHomeScreen);
     }
 
     @Override
@@ -92,7 +110,6 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeViewHolder
         if (data == null) return 0;
         return data.size();
     }
-
 }
 
 
