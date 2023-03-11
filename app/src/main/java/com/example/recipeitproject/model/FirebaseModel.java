@@ -15,6 +15,9 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class FirebaseModel {
@@ -69,7 +72,9 @@ public class FirebaseModel {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            db.collection(User.COLLECTION).document(email).set(user.toJson())
+                            String id = db.collection(User.COLLECTION).document().getId();
+                            user.setId(id);
+                            db.collection(User.COLLECTION).document(id).set(user.toJson())
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -111,6 +116,72 @@ public class FirebaseModel {
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
                             error.onComplete(null);
                         }
+                    }
+                });
+    }
+
+    public void getCategories(Model.Listener<HashMap<String, String>> idsByNames, Model.Listener<HashMap<String, String>> namesByIds) {
+        db.collection(Category.COLLECTION)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<Category> list = new LinkedList<>();
+                        HashMap<String, String> categoryIdsByNames = new HashMap<>();
+                        HashMap<String, String> categoryNamesByIds = new HashMap<>();
+
+                        if (task.isSuccessful()) {
+                            QuerySnapshot jsonsList = task.getResult();
+                            for (DocumentSnapshot json : jsonsList) {
+                                Category category = Category.fromJson(json.getData());
+                                categoryIdsByNames.put(category.getName(), category.getId());
+                                categoryNamesByIds.put(category.getId(), category.getName());
+                                list.add(category);
+                            }
+                            Log.d("TAG", "fetchCategories:success");
+                        }
+                        idsByNames.onComplete(categoryIdsByNames);
+                        namesByIds.onComplete(categoryNamesByIds);
+                    }
+                });
+    }
+
+    public void getRecipes(Model.Listener<List<Recipe>> callback) {
+        db.collection(Recipe.COLLECTION)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<Recipe> list = new LinkedList<>();
+                        if (task.isSuccessful()) {
+                            QuerySnapshot jsonsList = task.getResult();
+                            for (DocumentSnapshot json : jsonsList) {
+                                Recipe recipe = Recipe.fromJson(json.getData());
+                                list.add(recipe);
+                            }
+                            Log.d("TAG", "getRecipes:success");
+                        }
+                        callback.onComplete(list);
+                    }
+                });
+    }
+
+    public void getUsers(Model.Listener<HashMap<String, User>> callback) {
+        db.collection(User.COLLECTION)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        HashMap<String, User> usersByIds = new HashMap<>();
+                        if (task.isSuccessful()) {
+                            QuerySnapshot jsonsList = task.getResult();
+                            for (DocumentSnapshot json : jsonsList) {
+                                User user = User.fromJson(json.getData());
+                                usersByIds.put(user.getId(), user);
+                            }
+                            Log.d("TAG", "getUsers:success");
+                        }
+                        callback.onComplete(usersByIds);
                     }
                 });
     }

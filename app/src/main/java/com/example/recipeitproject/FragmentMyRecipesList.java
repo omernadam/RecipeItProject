@@ -23,7 +23,6 @@ public class FragmentMyRecipesList extends Fragment {
 
     FragmentMyRecipesListBinding binding;
     RecipeRecyclerAdapter adapter;
-    Boolean flag=true;
 
 
     @Override
@@ -32,26 +31,6 @@ public class FragmentMyRecipesList extends Fragment {
 
         binding = FragmentMyRecipesListBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
-        if (getArguments() != null)
-            flag = getArguments().getBoolean("flag");
-
-        binding.recyclerView.setHasFixedSize(true);
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new RecipeRecyclerAdapter(getLayoutInflater(),Model.instance().getAllRecipes(), flag);
-        binding.recyclerView.setAdapter(adapter);
-
-
-
-        adapter.setOnItemClickListener(new RecipeRecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int pos) {
-                Log.d("TAG", "Row was clicked " + pos);
-                Recipe rc = Model.instance().getAllRecipes().get(pos);
-//                StudentsListFragmentDirections.ActionStudentsListFragmentToBlueFragment action = StudentsListFragmentDirections.actionStudentsListFragmentToBlueFragment(st.name);
-//                Navigation.findNavController(view).navigate(action);
-            }
-        });
 
         View addButton = view.findViewById(R.id.btnAdd);
 //        NavDirections action = StudentsListFragmentDirections.actionGlobalAddStudentFragment();

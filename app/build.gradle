@@ -30,6 +30,8 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+
     }
 }
 
@@ -48,5 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     def fragment_version = "1.5.5"
     implementation "androidx.fragment:fragment:$fragment_version"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation 'com.squareup.picasso:picasso:2.8'
 
 }

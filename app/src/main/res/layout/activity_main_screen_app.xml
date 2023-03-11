@@ -7,7 +7,6 @@
     android:background="@drawable/page_bg"
     tools:context=".MainScreenApp">
 
-
     <Button
         android:id="@+id/profile_btn"
         android:layout_width="45dp"
@@ -33,35 +32,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
-        android:id="@+id/recipe_type_spinner"
-        android:layout_width="132dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="120dp"
-        android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/recipe_type_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="16dp"
-        android:text="Select Type"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/recipe_type_spinner"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycle_list"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_recipes_list"
         android:layout_width="412dp"
         android:layout_height="552dp"
         android:layout_marginTop="36dp"
-        app:layout_constraintTop_toBottomOf="@+id/recipe_type_spinner"
+        app:layout_constraintTop_toBottomOf="@+id/main_screen_title"
         tools:layout_editor_absoluteX="-1dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
