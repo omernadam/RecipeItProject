@@ -21,7 +21,7 @@ import com.example.recipeitproject.model.Recipe;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FragmentRecipesViewer extends Fragment {
+public class RecipesViewerFragment extends Fragment {
 
     static final String IS_IN_HOME_SCREEN = "isInHomeScreen";
     final String ALL_CATEGORIES_FILTER = "All";
