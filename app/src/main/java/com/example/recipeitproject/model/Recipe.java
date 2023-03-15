@@ -1,9 +1,13 @@
 package com.example.recipeitproject.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Recipe {
+public class Recipe implements Parcelable, Serializable {
 
     private String id;
     private String title;
@@ -20,14 +24,44 @@ public class Recipe {
     static final String IMAGE_URL = "imageUrl";
     static final String USER_ID = "userId";
 
-    public Recipe(String id, String title, String categoryId, String description, String imageUrl, String userId) {
-        this.id = id;
+    public Recipe(String title, String categoryId, String description, String userId) {
         this.title = title;
         this.categoryId = categoryId;
         this.description = description;
-        this.imageUrl = imageUrl;
         this.userId = userId;
+        this.imageUrl = "";
     }
+
+    public Recipe(String title, String categoryId, String description, String imageUrl, String userId) {
+        this(title, categoryId, description, userId);
+        this.imageUrl = imageUrl;
+    }
+
+    public Recipe(String id, String title, String categoryId, String description, String imageUrl, String userId) {
+        this(title, categoryId, description, imageUrl, userId);
+        this.id = id;
+    }
+
+    protected Recipe(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        categoryId = in.readString();
+        description = in.readString();
+        imageUrl = in.readString();
+        userId = in.readString();
+    }
+
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        @Override
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -59,6 +93,14 @@ public class Recipe {
         return Model.instance().getUsernameById(userId);
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public static Recipe fromJson(Map<String, Object> json) {
         String id = (String) json.get(ID);
         String title = (String) json.get(TITLE);
@@ -83,4 +125,18 @@ public class Recipe {
         return json;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(title);
+        parcel.writeString(categoryId);
+        parcel.writeString(description);
+        parcel.writeString(imageUrl);
+        parcel.writeString(userId);
+    }
 }

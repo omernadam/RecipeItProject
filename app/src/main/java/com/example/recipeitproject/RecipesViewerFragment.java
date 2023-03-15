@@ -1,8 +1,9 @@
 package com.example.recipeitproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,11 +76,14 @@ public class RecipesViewerFragment extends Fragment {
         adapter = new RecipeRecyclerAdapter(getLayoutInflater(), recipesToShow, isInHomeScreen);
         binding.recycleList.setAdapter(adapter);
 
+        Intent intent = new Intent(getContext(), UpdateRecipe_temp_activity.class);
+
         adapter.setOnItemClickListener(new RecipeRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                Log.d("TAG", "Row was clicked " + pos);
-                Recipe rc = Model.instance().getAllRecipes().get(pos);
+                Recipe recipe = recipesToShow.get(pos);
+                intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
+                startActivity(intent);
 //                StudentsListFragmentDirections.ActionStudentsListFragmentToBlueFragment action = StudentsListFragmentDirections.actionStudentsListFragmentToBlueFragment(st.name);
 //                Navigation.findNavController(view).navigate(action);
             }
@@ -88,7 +92,7 @@ public class RecipesViewerFragment extends Fragment {
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                List<Recipe> recipesToShow = getRecipesToShow();
+                recipesToShow = getRecipesToShow();
                 String categoryName = (String) parent.getItemAtPosition(pos);
 
                 if (!categoryName.equals(ALL_CATEGORIES_FILTER)) {

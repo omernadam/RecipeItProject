@@ -21,7 +21,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.fragment.app.FragmentContainerView
+    <ImageButton
+        android:id="@+id/btnAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_recipes_title"
+        app:layout_constraintVertical_bias="0.0" />
+
+        <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_recipes_list"
         android:layout_width="412dp"
         android:layout_height="552dp"
