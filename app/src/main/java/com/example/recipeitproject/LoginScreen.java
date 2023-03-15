@@ -30,7 +30,7 @@ public class LoginScreen extends AppCompatActivity {
         );
 
         Model.instance().fetchLoggedUser(unused -> {
-            startActivity(new Intent(this, MyRecipesList.class));
+            startActivity(mainScreenIntent);
             finish();
         });
 
