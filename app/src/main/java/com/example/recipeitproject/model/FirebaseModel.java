@@ -205,6 +205,11 @@ public class FirebaseModel {
                 });
     }
 
+    public void logOutUser(){
+        FirebaseUser currentUser = auth.getCurrentUser();
+        auth.signOut();
+    }
+
     void uploadImage(String name, Bitmap bitmap, Model.Listener<String> listener) {
         StorageReference storageRef = storage.getReference();
         StorageReference imagesRef = storageRef.child("images/" + name + ".jpg");

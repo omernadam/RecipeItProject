@@ -35,7 +35,6 @@ public class RecipeFetcher extends AppCompatActivity {
         RecipeFetcherCon.getRandomRecipe(4, new Callback<RecipeResponse>() {
             @Override
             public void onResponse(Call<RecipeResponse> call, Response<RecipeResponse> response) {
-                System.out.println("------------------------------");
 
                 if (response.isSuccessful()) {
                     RecipeApi recipe = response.body().getRecipes().get(0);
