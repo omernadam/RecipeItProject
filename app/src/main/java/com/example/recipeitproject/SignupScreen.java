@@ -44,8 +44,8 @@ public class SignupScreen extends AppCompatActivity {
                 if (email.length() == 0) {
                     emailEt.setError("Required");
                 }
-                if (password.length() == 0) {
-                    passwordEt.setError("Required");
+                if (password.length() < 6) {
+                    passwordEt.setError("Must have more than 5 characters");
                 }
 
             }

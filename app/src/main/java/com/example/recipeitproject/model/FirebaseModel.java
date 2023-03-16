@@ -185,6 +185,16 @@ public class FirebaseModel {
                 });
     }
 
+    public void updateRecipe(Recipe recipe, Model.Listener<Void> listener) {
+        db.collection(Recipe.COLLECTION).document(recipe.getId()).set(recipe.toJson())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.onComplete(null);
+                    }
+                });
+    }
+
     public void getUsers(Model.Listener<HashMap<String, User>> callback) {
         db.collection(User.COLLECTION)
                 .get()
@@ -206,7 +216,6 @@ public class FirebaseModel {
     }
 
     public void logOutUser(){
-        FirebaseUser currentUser = auth.getCurrentUser();
         auth.signOut();
     }
 

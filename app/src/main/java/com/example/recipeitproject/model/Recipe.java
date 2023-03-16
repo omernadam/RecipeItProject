@@ -97,6 +97,18 @@ public class Recipe implements Parcelable, Serializable {
         this.id = id;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }

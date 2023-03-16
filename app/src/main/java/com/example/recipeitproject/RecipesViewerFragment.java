@@ -48,15 +48,19 @@ public class RecipesViewerFragment extends Fragment {
         Spinner dropdown = view.findViewById(R.id.recipe_type_spinner);
 
         userId = Model.instance().getCurrentUser().getId();
-        Model.instance().fetchCategories(
-                idsByNames -> {
-                    Model.instance().setCategoriesIdsByNames(idsByNames);
-                },
-                namesByIds -> {
-                    Model.instance().setCategoriesNamesByIds(namesByIds);
-                    createDropList(dropdown);
-                }
-        );
+        if (Model.instance().getCategoriesNames().size() == 0) {
+            Model.instance().fetchCategories(
+                    idsByNames -> {
+                        Model.instance().setCategoriesIdsByNames(idsByNames);
+                    },
+                    namesByIds -> {
+                        Model.instance().setCategoriesNamesByIds(namesByIds);
+                        createDropList(dropdown);
+                    }
+            );
+        } else {
+            createDropList(dropdown);
+        }
 
         if (getArguments() != null) {
             isInHomeScreen = getArguments().getBoolean(IS_IN_HOME_SCREEN);

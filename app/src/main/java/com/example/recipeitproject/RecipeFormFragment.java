@@ -32,9 +32,27 @@ public class RecipeFormFragment extends Fragment {
     FragmentRecipeFormBinding binding;
     ActivityResultLauncher<Void> cameraLauncher;
     ActivityResultLauncher<String> galleryLauncher;
-    Recipe recipe;
+    Recipe recipeToEdit;
     String categoryName;
     Boolean isImageSelected = false;
+
+    private void handleRecipeAction(Recipe recipe) {
+        if (recipeToEdit == null) {
+            Model.instance().addRecipe(recipe, (unused) -> {
+                Log.d("TAG", "Recipe added successfully");
+//                        Navigation.findNavController(view1).popBackStack();
+                requireActivity().finish();
+            });
+        } else {
+            recipe.setId(recipeToEdit.getId());
+            recipeToEdit = recipe;
+            Model.instance().updateRecipe(recipe, (unused) -> {
+                Log.d("TAG", "Recipe updated successfully");
+//                        Navigation.findNavController(view1).popBackStack();
+                requireActivity().finish();
+            });
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,13 +89,14 @@ public class RecipeFormFragment extends Fragment {
         createDropList(categoriesDropdown);
 
         if (getArguments() != null) {
-            recipe = getArguments().getParcelable(RECIPE_TO_EDIT);
-            binding.titleEt.setText(recipe.getTitle());
-            binding.descriptionEt.setText(recipe.getDescription());
-            binding.categorySpinner.setSelection(Integer.parseInt(recipe.getCategoryId()) - 1);
+            recipeToEdit = getArguments().getParcelable(RECIPE_TO_EDIT);
+            binding.titleEt.setText(recipeToEdit.getTitle());
+            binding.descriptionEt.setText(recipeToEdit.getDescription());
+            binding.categorySpinner.setSelection(Integer.parseInt(recipeToEdit.getCategoryId()) - 1);
 
-            if (recipe.getImageUrl() != null && recipe.getImageUrl().length() > 5) {
-                Picasso.get().load(recipe.getImageUrl()).placeholder(R.drawable.noimage).into(binding.recipeImg);
+            if (recipeToEdit.getImageUrl() != null && recipeToEdit.getImageUrl().length() > 5) {
+                Picasso.get().load(recipeToEdit.getImageUrl()).placeholder(R.drawable.noimage).into(binding.recipeImg);
+                isImageSelected = true;
             } else {
                 binding.recipeImg.setImageResource(R.drawable.noimage);
             }
@@ -102,19 +121,10 @@ public class RecipeFormFragment extends Fragment {
                         if (url != null) {
                             recipe.setImageUrl(url);
                         }
-                        Model.instance().addRecipe(recipe, (unused) -> {
-                            Log.d("TAG", "Recipe with image updated successfully");
-//                        Navigation.findNavController(view1).popBackStack();
-                            requireActivity().finish();
-                        });
+                        handleRecipeAction(recipe);
                     });
                 } else {
-                    Model.instance().addRecipe(recipe, (unused) -> {
-                        Log.d("TAG", "Recipe without image updated successfully");
-//                    Navigation.findNavController(view1).popBackStack();
-                        requireActivity().finish();
-
-                    });
+                    handleRecipeAction(recipe);
                 }
             } else {
                 if (title.length() == 0) {

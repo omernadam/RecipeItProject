@@ -127,6 +127,18 @@ public class Model {
         });
     }
 
+    public void updateRecipe(Recipe recipe, Listener<Void> listener) {
+        recipes.forEach(rc -> {
+            if (rc.getId().equals(recipe.getId())) {
+
+            }
+        });
+        firebaseModel.updateRecipe(recipe, (Void) -> {
+//            refresh
+            listener.onComplete(null);
+        });
+    }
+
     public void fetchRecipes(Listener<List<Recipe>> callback) {
         firebaseModel.getRecipes(callback);
     }
@@ -142,6 +154,7 @@ public class Model {
     }
 
     public void logOut(){
+        setCurrentUser(null);
         firebaseModel.logOutUser();
     }
 }
