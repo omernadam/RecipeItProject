@@ -13,12 +13,18 @@
         android:theme="@style/Theme.RecipeItProject"
         tools:targetApi="31">
         <activity
-            android:name=".MyRecipesList"
-            android:exported="true" >
+            android:name=".RecipeFetcher"
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
+        </activity>
+        <activity
+            android:name=".MyRecipesList"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
         </activity>
         <activity
             android:name=".my_recipe_edit_screen"
@@ -26,8 +32,6 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
-
         </activity>
         <activity
             android:name=".my_recipe_row"
@@ -35,8 +39,6 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
-
         </activity>
         <activity
             android:name=".myProfileScreen"
@@ -58,8 +60,6 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
-
         </activity>
         <activity
             android:name=".SignupScreen"
@@ -79,6 +79,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".MainActivity"

@@ -74,6 +74,10 @@ public class Model {
                 });
     }
 
+    public void logOut(){
+        firebaseModel.logOutUser();
+    }
+
     public void setUsersByIds(HashMap<String, User> hashMap) {
         usersByIds = hashMap;
     }
@@ -131,4 +135,6 @@ public class Model {
                 .filter(recipe -> userId.equals(recipe.getUserId()))
                 .collect(Collectors.toList());
     }
+
+
 }

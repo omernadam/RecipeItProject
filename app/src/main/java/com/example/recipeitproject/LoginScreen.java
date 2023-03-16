@@ -24,7 +24,6 @@ public class LoginScreen extends AppCompatActivity {
 
         Intent signUpIntent = new Intent(this, SignupScreen.class);
         Intent mainScreenIntent = new Intent(this, MainScreenApp.class);
-        Intent intent = new Intent(this, MyRecipesList.class);
 
         Model.instance().fetchUsers(usersByIds -> {
                     Model.instance().setUsersByIds(usersByIds);
@@ -32,7 +31,7 @@ public class LoginScreen extends AppCompatActivity {
         );
 
         Model.instance().fetchLoggedUser(unused -> {
-            startActivity(intent);
+            startActivity(mainScreenIntent);
             finish();
         });
 

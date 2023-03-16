@@ -120,6 +120,10 @@ public class FirebaseModel {
                 });
     }
 
+    public void logOutUser(){
+        FirebaseUser currentUser = auth.getCurrentUser();
+        auth.signOut();
+    }
     public void getCategories(Model.Listener<HashMap<String, String>> idsByNames, Model.Listener<HashMap<String, String>> namesByIds) {
         db.collection(Category.COLLECTION)
                 .get()
@@ -185,4 +189,6 @@ public class FirebaseModel {
                     }
                 });
     }
+
+
 }
