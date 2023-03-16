@@ -1,5 +1,6 @@
 package com.example.recipeitproject.model;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -74,10 +75,6 @@ public class Model {
                 });
     }
 
-    public void logOut(){
-        firebaseModel.logOutUser();
-    }
-
     public void setUsersByIds(HashMap<String, User> hashMap) {
         usersByIds = hashMap;
     }
@@ -122,8 +119,12 @@ public class Model {
         recipes = list;
     }
 
-    public void addNewRecipe(Recipe recipe) {
+    public void addRecipe(Recipe recipe, Listener<Void> listener) {
         recipes.add(recipe);
+        firebaseModel.addRecipe(recipe, (Void) -> {
+//            refresh
+            listener.onComplete(null);
+        });
     }
 
     public void fetchRecipes(Listener<List<Recipe>> callback) {
@@ -136,5 +137,7 @@ public class Model {
                 .collect(Collectors.toList());
     }
 
-
+    public void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {
+        firebaseModel.uploadImage(name, bitmap, listener);
+    }
 }

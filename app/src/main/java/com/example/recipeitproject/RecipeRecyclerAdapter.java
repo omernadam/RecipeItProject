@@ -27,8 +27,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     public RecipeViewHolder(@NonNull View itemView, RecipeRecyclerAdapter.OnItemClickListener listener, List<Recipe> data, Boolean isInHomeScreen) {
         super(itemView);
-
-
         titleTv = itemView.findViewById(R.id.my_recipe_row_title_tv);
         image = itemView.findViewById(R.id.my_recipe_row_image);
         categoryTv = itemView.findViewById(R.id.my_recipe_row_category);
@@ -44,7 +42,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
 
         this.data = data;
 
-        itemView.setOnClickListener(new View.OnClickListener() {
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int pos = getAdapterPosition();

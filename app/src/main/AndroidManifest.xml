@@ -40,6 +40,28 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+
+        <activity
+            android:name=".AddRecipe_temp_activity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+
+        </activity>
+
+        <activity
+            android:name=".UpdateRecipe_temp_activity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+
+        </activity>
+
         <activity
             android:name=".myProfileScreen"
             android:exported="true">

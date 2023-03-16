@@ -24,7 +24,6 @@ public class LoginScreen extends AppCompatActivity {
 
         Intent signUpIntent = new Intent(this, SignupScreen.class);
         Intent mainScreenIntent = new Intent(this, MainScreenApp.class);
-
         Model.instance().fetchUsers(usersByIds -> {
                     Model.instance().setUsersByIds(usersByIds);
                 }
