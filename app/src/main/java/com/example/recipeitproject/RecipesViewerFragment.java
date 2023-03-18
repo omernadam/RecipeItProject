@@ -48,7 +48,11 @@ public class RecipesViewerFragment extends Fragment {
         Spinner dropdown = view.findViewById(R.id.recipe_type_spinner);
 
         userId = Model.instance().getCurrentUser().getId();
-        if (Model.instance().getCategoriesNames().size() == 0) {
+        if (getArguments() != null) {
+            isInHomeScreen = getArguments().getBoolean(IS_IN_HOME_SCREEN);
+        }
+
+        if (isInHomeScreen) {
             Model.instance().fetchCategories(
                     idsByNames -> {
                         Model.instance().setCategoriesIdsByNames(idsByNames);
@@ -60,10 +64,6 @@ public class RecipesViewerFragment extends Fragment {
             );
         } else {
             createDropList(dropdown);
-        }
-
-        if (getArguments() != null) {
-            isInHomeScreen = getArguments().getBoolean(IS_IN_HOME_SCREEN);
         }
 
         Model.instance().fetchRecipes(recipes -> {

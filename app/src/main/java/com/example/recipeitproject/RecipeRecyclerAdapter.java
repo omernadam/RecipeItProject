@@ -19,6 +19,7 @@ import java.util.List;
 class RecipeViewHolder extends RecyclerView.ViewHolder {
     TextView titleTv;
     ImageView image;
+    TextView usernameTv;
     TextView categoryTv;
     TextView descriptionTv;
     ImageButton editButton;
@@ -29,6 +30,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         titleTv = itemView.findViewById(R.id.my_recipe_row_title_tv);
         image = itemView.findViewById(R.id.my_recipe_row_image);
+        usernameTv = itemView.findViewById(R.id.my_recipe_row_username);
         categoryTv = itemView.findViewById(R.id.my_recipe_row_category);
         descriptionTv = itemView.findViewById(R.id.my_recipe_row_description);
         editButton = itemView.findViewById(R.id.my_recipe_row_edit_btn);
@@ -36,8 +38,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         if (isInHomeScreen) {
             editButton.setVisibility(View.INVISIBLE);
         } else {
-//            disappear user name
-//            titleTv.setVisibility(View.INVISIBLE);
+            usernameTv.setVisibility(View.INVISIBLE);
         }
 
         this.data = data;
@@ -53,6 +54,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Recipe recipe, int pos) {
         titleTv.setText(recipe.getTitle());
+        usernameTv.setText(recipe.getUsername());
         categoryTv.setText(recipe.getCategoryName());
         descriptionTv.setText(recipe.getDescription());
         if (recipe.getImageUrl() != null && recipe.getImageUrl().length() > 5) {

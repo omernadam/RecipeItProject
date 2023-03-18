@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.recipeitproject.model.Model;
 
@@ -16,7 +17,9 @@ public class main_user_profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_user_profile);
 
-
+        String username = Model.instance().getCurrentUser().getUsername();
+        TextView usernameTv = findViewById(R.id.user_name_tv);
+        usernameTv.setText(username);
         Button my_profile_button = findViewById(R.id.my_profile_btn);
         Button my_recipes_button = findViewById(R.id.my_recipes_btn);
         Button log_out_button = findViewById(R.id.log_out_btn);
