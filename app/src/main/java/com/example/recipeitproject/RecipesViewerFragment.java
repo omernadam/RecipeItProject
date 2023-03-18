@@ -13,6 +13,8 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.recipeitproject.databinding.FragmentRecipesViewerBinding;
@@ -23,20 +25,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RecipesViewerFragment extends Fragment {
-
     static final String IS_IN_HOME_SCREEN = "isInHomeScreen";
     final String ALL_CATEGORIES_FILTER = "All";
 
     FragmentRecipesViewerBinding binding;
     RecipeRecyclerAdapter adapter;
+    RecipesViewerFragmentViewModel viewModel;
     Boolean isInHomeScreen = true;
     List<Recipe> recipesToShow;
     String userId = "";
 
-    private List<Recipe> getRecipesToShow() {
-        if (isInHomeScreen)
-            return Model.instance().getAllRecipes();
-        return Model.instance().getUserRecipes(userId);
+    private LiveData<List<Recipe>> getRecipesToShow() {
+        return isInHomeScreen
+                ? viewModel.getData()
+                : viewModel.getUserData(userId);
     }
 
     @Override
@@ -66,14 +68,16 @@ public class RecipesViewerFragment extends Fragment {
             createDropList(dropdown);
         }
 
-        Model.instance().fetchRecipes(recipes -> {
-            Model.instance().setRecipes(recipes);
-            recipesToShow = recipes;
+        recipesToShow = getRecipesToShow().getValue();
 
-            if (!isInHomeScreen) {
-                recipesToShow = Model.instance().getUserRecipes(userId);
-            }
-        });
+//        Model.instance().fetchRecipes(recipes -> {
+//            Model.instance().setRecipes(recipes);
+//            recipesToShow = recipes;
+//
+//            if (!isInHomeScreen) {
+//                recipesToShow = viewModel.getUserData(userId).getValue();
+//            }
+//        });
 
         binding.recycleList.setHasFixedSize(true);
         binding.recycleList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -96,7 +100,7 @@ public class RecipesViewerFragment extends Fragment {
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                recipesToShow = getRecipesToShow();
+                recipesToShow = getRecipesToShow().getValue();
                 String categoryName = (String) parent.getItemAtPosition(pos);
 
                 if (!categoryName.equals(ALL_CATEGORIES_FILTER)) {
@@ -113,21 +117,34 @@ public class RecipesViewerFragment extends Fragment {
             }
         });
 
+        binding.progressBar.setVisibility(View.GONE);
+
+        getRecipesToShow().observe(getViewLifecycleOwner(), list -> {
+            adapter.setData(list);
+        });
+
+        Model.instance().EventRecipesListLoadingState.observe(getViewLifecycleOwner(), status -> {
+            binding.swipeRefresh.setRefreshing(status == Model.LoadingState.LOADING);
+        });
+
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            reloadData();
+        });
+
         return view;
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        // viewModel = new ViewModelProvider(this).get(StudentsListFragmentViewModel.class);
+        viewModel = new ViewModelProvider(this).get(RecipesViewerFragmentViewModel.class);
     }
 
     void reloadData() {
-//        binding.progressBar.setVisibility(View.VISIBLE);
-        // Model.instance().refreshAllStudents();
+        Model.instance().refreshAllRecipes();
     }
 
-    public void createDropList(Spinner dropdown) {
+    private void createDropList(Spinner dropdown) {
         List<String> categoriesNames = Model.instance().getCategoriesNames();
         categoriesNames.add(0, ALL_CATEGORIES_FILTER);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, categoriesNames);

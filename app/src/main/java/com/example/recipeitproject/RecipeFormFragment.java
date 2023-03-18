@@ -164,7 +164,7 @@ public class RecipeFormFragment extends Fragment {
         return view;
     }
 
-    public void createDropList(Spinner dropdown) {
+    private void createDropList(Spinner dropdown) {
         List<String> categoriesNames = Model.instance().getCategoriesNames();
         categoryName = categoriesNames.get(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, categoriesNames);

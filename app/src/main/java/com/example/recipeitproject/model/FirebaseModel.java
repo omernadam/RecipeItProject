@@ -10,13 +10,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -173,6 +176,26 @@ public class FirebaseModel {
                 });
     }
 
+    public void getAllRecipesSince(Long since, Model.Listener<List<Recipe>> callback) {
+        db.collection(Recipe.COLLECTION)
+                .whereGreaterThanOrEqualTo(Recipe.LAST_UPDATED, new Timestamp(since, 0))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<Recipe> list = new LinkedList<>();
+                        if (task.isSuccessful()) {
+                            QuerySnapshot jsonsList = task.getResult();
+                            for (DocumentSnapshot json : jsonsList) {
+                                Recipe recipe = Recipe.fromJson(json.getData());
+                                list.add(recipe);
+                            }
+                        }
+                        callback.onComplete(list);
+                    }
+                });
+    }
+
     public void addRecipe(Recipe recipe, Model.Listener<Void> listener) {
         String id = db.collection(Recipe.COLLECTION).document().getId();
         recipe.setId(id);
@@ -215,7 +238,7 @@ public class FirebaseModel {
                 });
     }
 
-    public void logOutUser(){
+    public void logOutUser() {
         auth.signOut();
     }
 
