@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class Model {
     private static final Model _instance = new Model();
@@ -34,6 +33,7 @@ public class Model {
     private HashMap<String, String> categoryIdsByNames = new HashMap<>();
     private HashMap<String, String> categoryNamesByIds = new HashMap<>();
     private LiveData<List<Recipe>> recipes;
+    private LiveData<List<Recipe>> userRecipes;
 
     private Model() {
     }
@@ -127,11 +127,15 @@ public class Model {
             recipes = localDb.recipeDao().getAll();
             refreshAllRecipes();
         }
+
         return recipes;
     }
 
     public LiveData<List<Recipe>> getUserRecipes(String userId) {
-        return localDb.recipeDao().getUserRecipes(userId);
+        if (userRecipes == null) {
+            userRecipes = localDb.recipeDao().getUserRecipes(userId);
+        }
+        return userRecipes;
     }
 
     public void refreshAllRecipes() {
@@ -141,7 +145,7 @@ public class Model {
         // get all updated records from firebase since local last update
         firebaseModel.getAllRecipesSince(localLastUpdate, list -> {
             executor.execute(() -> {
-                Log.d("TAG", " firebase return : " + list.size());
+                Log.d("TAG", "firebase return : " + list.size());
                 Long time = localLastUpdate;
                 for (Recipe recipe : list) {
                     // insert new records into ROOM
@@ -162,32 +166,18 @@ public class Model {
         });
     }
 
-    public void setRecipes(List<Recipe> list) {
-//        recipes = list;
-    }
-
     public void addRecipe(Recipe recipe, Listener<Void> listener) {
-//        recipes.add(recipe);
         firebaseModel.addRecipe(recipe, (Void) -> {
-//            refresh
+            refreshAllRecipes();
             listener.onComplete(null);
         });
     }
 
     public void updateRecipe(Recipe recipe, Listener<Void> listener) {
-//        recipes.forEach(rc -> {
-//            if (rc.getId().equals(recipe.getId())) {
-//
-//            }
-//        });
         firebaseModel.updateRecipe(recipe, (Void) -> {
-//            refresh
+            refreshAllRecipes();
             listener.onComplete(null);
         });
-    }
-
-    public void fetchRecipes(Listener<List<Recipe>> callback) {
-        firebaseModel.getRecipes(callback);
     }
 
     public void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {

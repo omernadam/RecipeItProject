@@ -156,26 +156,6 @@ public class FirebaseModel {
                 });
     }
 
-    public void getRecipes(Model.Listener<List<Recipe>> callback) {
-        db.collection(Recipe.COLLECTION)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        List<Recipe> list = new LinkedList<>();
-                        if (task.isSuccessful()) {
-                            QuerySnapshot jsonsList = task.getResult();
-                            for (DocumentSnapshot json : jsonsList) {
-                                Recipe recipe = Recipe.fromJson(json.getData());
-                                list.add(recipe);
-                            }
-                            Log.d("TAG", "getRecipes:success");
-                        }
-                        callback.onComplete(list);
-                    }
-                });
-    }
-
     public void getAllRecipesSince(Long since, Model.Listener<List<Recipe>> callback) {
         db.collection(Recipe.COLLECTION)
                 .whereGreaterThanOrEqualTo(Recipe.LAST_UPDATED, new Timestamp(since, 0))
@@ -190,6 +170,7 @@ public class FirebaseModel {
                                 Recipe recipe = Recipe.fromJson(json.getData());
                                 list.add(recipe);
                             }
+                            Log.d("TAG", "getRecipes:success");
                         }
                         callback.onComplete(list);
                     }
