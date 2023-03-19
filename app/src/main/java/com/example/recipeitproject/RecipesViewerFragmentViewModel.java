@@ -15,7 +15,15 @@ public class RecipesViewerFragmentViewModel extends ViewModel {
         return data;
     }
 
+    LiveData<List<Recipe>> getCategoryData(String categoryId) {
+        return Model.instance().getCategoryRecipes(categoryId);
+    }
+
     LiveData<List<Recipe>> getUserData(String userId) {
         return Model.instance().getUserRecipes(userId);
+    }
+
+    LiveData<List<Recipe>> getCategoryUserData(String userId, String categoryId) {
+        return Model.instance().getCategoryUserRecipes(userId, categoryId);
     }
 }

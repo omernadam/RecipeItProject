@@ -4,8 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="70dp"
     android:background="@drawable/page_bg"
     tools:context=".my_recipe_row">
+
+    <ImageButton
+        android:id="@+id/my_recipe_row_edit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_edit_24" />
 
     <TextView
         android:id="@+id/my_recipe_row_title_tv"
@@ -18,57 +29,52 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="26dp" />
 
-    <ImageView
-        android:id="@+id/my_recipe_row_image"
-        android:layout_width="185dp"
-        android:layout_height="167dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_recipe_row_title_tv"
-        app:srcCompat="@drawable/noimage" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/my_recipe_row_title_tv">
 
-    <TextView
-        android:id="@+id/my_recipe_row_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_recipe_row_image" />
+        <ImageView
+            android:id="@+id/my_recipe_row_image"
+            android:layout_width="0dp"
+            android:layout_height="167dp"
+            android:layout_margin="8dp"
+            android:layout_weight="4"
+            app:srcCompat="@drawable/noimage" />
 
-    <TextView
-        android:id="@+id/my_recipe_row_category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="No Category"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_recipe_row_username" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="6"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/my_recipe_row_description"
-        android:layout_width="393dp"
-        android:layout_height="165dp"
-        android:layout_marginTop="12dp"
-        android:text="Description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_recipe_row_category" />
+            <TextView
+                android:id="@+id/my_recipe_row_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:text="User"
+                android:textSize="16sp" />
 
-    <ImageButton
-        android:id="@+id/my_recipe_row_edit_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_edit_24" />
+            <TextView
+                android:id="@+id/my_recipe_row_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Category"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/my_recipe_row_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:text="Description" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

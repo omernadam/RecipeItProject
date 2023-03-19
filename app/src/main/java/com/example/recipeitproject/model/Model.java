@@ -33,7 +33,9 @@ public class Model {
     private HashMap<String, String> categoryIdsByNames = new HashMap<>();
     private HashMap<String, String> categoryNamesByIds = new HashMap<>();
     private LiveData<List<Recipe>> recipes;
+    private HashMap<String, LiveData<List<Recipe>>> categoryRecipes = new HashMap<>();
     private LiveData<List<Recipe>> userRecipes;
+    private LiveData<List<Recipe>> categoryUserRecipes;
 
     private Model() {
     }
@@ -131,11 +133,25 @@ public class Model {
         return recipes;
     }
 
+    public LiveData<List<Recipe>> getCategoryRecipes(String categoryId) {
+        if (!categoryRecipes.containsKey(categoryId)) {
+            categoryRecipes.put(categoryId, localDb.recipeDao().getCategoryRecipes(categoryId));
+        }
+        return categoryRecipes.get(categoryId);
+    }
+
     public LiveData<List<Recipe>> getUserRecipes(String userId) {
         if (userRecipes == null) {
             userRecipes = localDb.recipeDao().getUserRecipes(userId);
         }
         return userRecipes;
+    }
+
+    public LiveData<List<Recipe>> getCategoryUserRecipes(String userId, String categoryId) {
+        if (categoryUserRecipes == null) {
+            categoryUserRecipes = localDb.recipeDao().getCategoryUserRecipes(userId, categoryId);
+        }
+        return categoryUserRecipes;
     }
 
     public void refreshAllRecipes() {

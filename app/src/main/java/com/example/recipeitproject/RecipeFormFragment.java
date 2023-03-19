@@ -36,6 +36,10 @@ public class RecipeFormFragment extends Fragment {
     String categoryName;
     Boolean isImageSelected = false;
 
+    private void handleDeleteButtonAppearance(Boolean toShow) {
+        binding.deletionButton.setVisibility(toShow ? View.VISIBLE : View.INVISIBLE);
+    }
+
     private void handleRecipeAction(Recipe recipe) {
         if (recipeToEdit == null) {
             Model.instance().addRecipe(recipe, (unused) -> {
@@ -64,6 +68,7 @@ public class RecipeFormFragment extends Fragment {
                 if (result != null) {
                     binding.recipeImg.setImageBitmap(result);
                     isImageSelected = true;
+                    handleDeleteButtonAppearance(true);
                 }
             }
         });
@@ -73,6 +78,7 @@ public class RecipeFormFragment extends Fragment {
                 if (result != null) {
                     binding.recipeImg.setImageURI(result);
                     isImageSelected = true;
+                    handleDeleteButtonAppearance(true);
                 }
             }
         });
@@ -97,10 +103,21 @@ public class RecipeFormFragment extends Fragment {
             if (recipeToEdit.getImageUrl() != null && recipeToEdit.getImageUrl().length() > 5) {
                 Picasso.get().load(recipeToEdit.getImageUrl()).placeholder(R.drawable.noimage).into(binding.recipeImg);
                 isImageSelected = true;
+                handleDeleteButtonAppearance(true);
+
             } else {
                 binding.recipeImg.setImageResource(R.drawable.noimage);
+                handleDeleteButtonAppearance(false);
             }
+        } else {
+            handleDeleteButtonAppearance(false);
         }
+
+        binding.deletionButton.setOnClickListener(view1 -> {
+            binding.recipeImg.setImageResource(R.drawable.noimage);
+            isImageSelected = false;
+            handleDeleteButtonAppearance(false);
+        });
 
         binding.saveBtn.setOnClickListener(view1 -> {
             String title = binding.titleEt.getText().toString();

@@ -22,7 +22,6 @@ import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.Recipe;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecipesViewerFragment extends Fragment {
     static final String IS_IN_HOME_SCREEN = "isInHomeScreen";
@@ -38,14 +37,16 @@ public class RecipesViewerFragment extends Fragment {
 
     private LiveData<List<Recipe>> getRecipesToShow() {
         return isInHomeScreen
-                ? viewModel.getData()
-                : viewModel.getUserData(userId);
-    }
-
-    private List<Recipe> getRecipesByCategoryId(String categoryId) {
-        return recipesToShow.stream()
-                .filter(recipe -> categoryId.equals(recipe.getCategoryId()))
-                .collect(Collectors.toList());
+                ? (
+                categoryId.equals("")
+                        ? viewModel.getData()
+                        : viewModel.getCategoryData(categoryId)
+        )
+                : (
+                categoryId.equals("")
+                        ? viewModel.getUserData(userId)
+                        : viewModel.getCategoryUserData(userId, categoryId)
+        );
     }
 
     @Override
@@ -68,6 +69,10 @@ public class RecipesViewerFragment extends Fragment {
                     },
                     namesByIds -> {
                         Model.instance().setCategoriesNamesByIds(namesByIds);
+                        namesByIds.keySet().forEach(id -> {
+                            viewModel.getCategoryData(id).observe(getViewLifecycleOwner(), list -> {
+                            });
+                        });
                         createDropList(dropdown);
                     }
             );
@@ -97,15 +102,12 @@ public class RecipesViewerFragment extends Fragment {
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                recipesToShow = getRecipesToShow().getValue();
                 String categoryName = (String) parent.getItemAtPosition(pos);
+                categoryId = !categoryName.equals(ALL_CATEGORIES_FILTER)
+                        ? Model.instance().getCategoryIdByName(categoryName)
+                        : "";
 
-                if (!categoryName.equals(ALL_CATEGORIES_FILTER)) {
-                    categoryId = Model.instance().getCategoryIdByName(categoryName);
-                    recipesToShow = getRecipesByCategoryId(categoryId);
-                } else {
-                    categoryId = "";
-                }
+                recipesToShow = getRecipesToShow().getValue();
                 adapter.setData(recipesToShow);
                 binding.recycleList.scrollToPosition(0);
             }
@@ -117,11 +119,10 @@ public class RecipesViewerFragment extends Fragment {
 
         binding.progressBar.setVisibility(View.GONE);
 
-        getRecipesToShow().observe(getViewLifecycleOwner(), list -> {
-            if (!categoryId.equals("")) {
-                list = getRecipesByCategoryId(categoryId);
+        viewModel.getData().observe(getViewLifecycleOwner(), list -> {
+            if (categoryId.equals("")) {
+                adapter.setData(list);
             }
-            adapter.setData(list);
         });
 
         Model.instance().EventRecipesListLoadingState.observe(getViewLifecycleOwner(), status -> {
