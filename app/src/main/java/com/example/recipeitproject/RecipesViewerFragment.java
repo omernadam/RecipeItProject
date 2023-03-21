@@ -43,6 +43,8 @@ public class RecipesViewerFragment extends Fragment {
         return Model.instance().getUserRecipes(userId);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,6 +52,10 @@ public class RecipesViewerFragment extends Fragment {
         binding = FragmentRecipesViewerBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         Spinner dropdown = view.findViewById(R.id.recipe_type_spinner);
+
+
+
+
 
         userId = Model.instance().getCurrentUser().getId();
         Model.instance().fetchCategories(

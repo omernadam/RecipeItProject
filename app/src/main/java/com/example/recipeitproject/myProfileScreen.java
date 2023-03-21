@@ -30,6 +30,9 @@ public class myProfileScreen extends AppCompatActivity {
         email_et.setText(user.getEmail());
         password_et.setText(user.getPassword());
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
 
         Intent mainScreenIntent = new Intent(this, MainScreenApp.class);
 

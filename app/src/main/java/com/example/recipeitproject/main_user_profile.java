@@ -17,6 +17,9 @@ public class main_user_profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_user_profile);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         String username = Model.instance().getCurrentUser().getUsername();
         TextView usernameTv = findViewById(R.id.user_name_tv);
         usernameTv.setText(username);

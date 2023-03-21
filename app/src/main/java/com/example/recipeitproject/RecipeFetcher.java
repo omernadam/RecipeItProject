@@ -1,6 +1,7 @@
 package com.example.recipeitproject;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import retrofit2.Response;
 import com.example.recipeitproject.model.RecipeApi;
 import com.example.recipeitproject.model.RecipeFetcherCon;
 import com.example.recipeitproject.model.RecipeResponse;
+import android.view.MenuItem;
+
 
 
 public class RecipeFetcher extends AppCompatActivity {
@@ -26,6 +29,9 @@ public class RecipeFetcher extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_fetcher);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
 
@@ -56,6 +62,17 @@ public class RecipeFetcher extends AppCompatActivity {
                 recipeSummaryTextView.setText("Unable to retrieve recipe");
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // Back button clicked
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static String stripHtmlTags(String html) {

@@ -20,6 +20,7 @@ public class MyRecipesList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_recipes_list);
 
+
         NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager().findFragmentById(R.id.main_navhost);
         navController = navHostFragment.getNavController();
         NavigationUI.setupActionBarWithNavController(this,navController);

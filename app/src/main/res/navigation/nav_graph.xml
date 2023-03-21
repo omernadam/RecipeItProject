@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/recipeFormFragment"
         android:name="com.example.recipeitproject.RecipeFormFragment"
-        android:label="RecipeFormFragment"
+        android:label="Recipe"
         tools:layout="@layout/fragment_recipe_form" />
     <action
         android:id="@+id/action_global_recipeFormFragment"
@@ -16,7 +16,7 @@
     <fragment
         android:id="@+id/recipesViewerFragment"
         android:name="com.example.recipeitproject.RecipesViewerFragment"
-        android:label="RecipesViewerFragment"
+        android:label="Recipes List"
         tools:layout="@layout/fragment_recipes_viewer">
         <action
             android:id="@+id/action_recipesViewerFragment_to_recipeFormFragment"
