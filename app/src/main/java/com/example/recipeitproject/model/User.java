@@ -51,6 +51,8 @@ public class User {
         this.id = id;
     }
 
+
+
     public static User fromJson(Map<String,Object> json){
         String id = (String)json.get(ID);
         String username = (String)json.get(USERNAME);

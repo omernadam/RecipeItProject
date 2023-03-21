@@ -157,4 +157,9 @@ public class Model {
         setCurrentUser(null);
         firebaseModel.logOutUser();
     }
+
+    public void updateUserName(String email, String newUsername, Listener<Void> listener){
+        firebaseModel.updateUsername(email, newUsername, listener);
+    }
+
 }

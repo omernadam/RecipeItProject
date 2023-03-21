@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipeitproject.model.Recipe;
@@ -47,6 +48,8 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 int pos = getAdapterPosition();
+
+
                 listener.onItemClick(pos);
             }
         });

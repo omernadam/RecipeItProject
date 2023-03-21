@@ -2,6 +2,7 @@ package com.example.recipeitproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -63,5 +64,6 @@ public class LoginScreen extends AppCompatActivity {
             startActivity(signUpIntent);
             finish();
         });
+
     }
 }

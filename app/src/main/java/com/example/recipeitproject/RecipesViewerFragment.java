@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.recipeitproject.databinding.FragmentRecipesViewerBinding;
@@ -85,13 +88,14 @@ public class RecipesViewerFragment extends Fragment {
         adapter.setOnItemClickListener(new RecipeRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                Recipe recipe = recipesToShow.get(pos);
-                intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
-                startActivity(intent);
-//                StudentsListFragmentDirections.ActionStudentsListFragmentToBlueFragment action = StudentsListFragmentDirections.actionStudentsListFragmentToBlueFragment(st.name);
-//                Navigation.findNavController(view).navigate(action);
+//
             }
         });
+
+
+
+
+
 
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
@@ -112,6 +116,7 @@ public class RecipesViewerFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+
 
         return view;
     }

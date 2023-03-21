@@ -2,6 +2,8 @@ package com.example.recipeitproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -16,9 +18,22 @@ public class MyRecipesList extends AppCompatActivity {
         setContentView(R.layout.activity_my_recipes_list);
 
         Intent intent = new Intent(this, AddRecipe_temp_activity.class);
+
+
+
         ImageButton addBtn = findViewById(R.id.btnAdd);
+
+
+
+
+
+
+
+
         addBtn.setOnClickListener(view -> {
-            startActivity(intent);
+            System.out.println("------");
+
+
         });
 
         bundle = new Bundle();
@@ -31,5 +46,7 @@ public class MyRecipesList extends AppCompatActivity {
                     .add(R.id.fragment_recipes_list, fragment)
                     .commit();
         }
+
+
     }
 }

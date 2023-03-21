@@ -48,6 +48,24 @@ public class FirebaseModel {
                 .get();
     }
 
+    public void updateUsername(String email, String newUsername, Model.Listener<Void> listener){
+        getUserByEmail(email).addOnSuccessListener(queryDocumentSnapshots -> {
+            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+            String userId = documentSnapshot.getId();
+            Map<String, Object> updates = new HashMap<>();
+            updates.put(User.USERNAME, newUsername);
+            db.collection(User.COLLECTION).document(userId).update(updates)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "updateUsername:success");
+                            listener.onComplete(null);
+                        } else {
+                            Log.w("TAG", "updateUsername:failure", task.getException());
+                        }
+                    });
+        }).addOnFailureListener(e -> Log.w("TAG", "getUserByEmail:failure", e));
+    }
+
     public void fetchLoggedInUser(Model.Listener<User> callback) {
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
@@ -245,4 +263,6 @@ public class FirebaseModel {
         });
 
     }
+
+
 }
