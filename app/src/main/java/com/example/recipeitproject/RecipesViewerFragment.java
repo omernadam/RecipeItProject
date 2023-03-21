@@ -13,6 +13,9 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.recipeitproject.databinding.FragmentRecipesViewerBinding;
@@ -32,6 +35,7 @@ public class RecipesViewerFragment extends Fragment {
     Boolean isInHomeScreen = true;
     List<Recipe> recipesToShow;
     String userId = "";
+    NavController navController;
 
     private List<Recipe> getRecipesToShow() {
         if (isInHomeScreen)
@@ -83,9 +87,13 @@ public class RecipesViewerFragment extends Fragment {
             public void onItemClick(int pos) {
                 Recipe recipe = recipesToShow.get(pos);
                 intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
-                startActivity(intent);
+//                startActivity(intent);
 //                StudentsListFragmentDirections.ActionStudentsListFragmentToBlueFragment action = StudentsListFragmentDirections.actionStudentsListFragmentToBlueFragment(st.name);
-//                Navigation.findNavController(view).navigate(action);
+
+                NavHostFragment navHostFragment =
+                        (NavHostFragment) getParentFragmentManager().findFragmentById(R.id.main_navhost);
+                navController = navHostFragment.getNavController();
+                navController.navigate(R.id.action_recipesViewerFragment_to_recipeFormFragment);
             }
         });
 
