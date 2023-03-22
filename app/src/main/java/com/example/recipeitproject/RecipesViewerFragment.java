@@ -85,6 +85,10 @@ public class RecipesViewerFragment extends Fragment {
         } else {
             Model.instance().getCategoriesIds().forEach(id -> {
                 viewModel.getCategoryUserData(userId, id).observe(getViewLifecycleOwner(), list -> {
+                    if (categoryId.equals(id)) {
+                        recipesToShow = list;
+                        adapter.setData(list);
+                    }
                 });
             });
             createDropList(dropdown);
@@ -102,7 +106,6 @@ public class RecipesViewerFragment extends Fragment {
             @Override
             public void onItemClick(int pos) {
                 Recipe recipe = recipesToShow.get(pos);
-                System.out.println(recipe.getTitle());
                 intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
                 startActivity(intent);
             }
@@ -130,6 +133,7 @@ public class RecipesViewerFragment extends Fragment {
 
         getScreenRecipes().observe(getViewLifecycleOwner(), list -> {
             if (categoryId.equals("")) {
+                recipesToShow = list;
                 adapter.setData(list);
             }
         });
