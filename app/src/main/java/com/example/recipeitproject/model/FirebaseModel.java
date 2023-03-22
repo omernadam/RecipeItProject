@@ -99,6 +99,16 @@ public class FirebaseModel {
                 });
     }
 
+    public void updateUser(User user, Model.Listener<Void> listener) {
+        db.collection(User.COLLECTION).document(user.getId()).set(user.toJson())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.onComplete(null);
+                    }
+                });
+    }
+
     public void loginUser(String email, String password, Model.Listener<Void> success, Model.Listener<Void> error) {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -223,9 +233,10 @@ public class FirebaseModel {
         auth.signOut();
     }
 
-    void uploadImage(String name, Bitmap bitmap, Model.Listener<String> listener) {
+    void uploadImage(String name, Bitmap bitmap, Boolean isUserImage, Model.Listener<String> listener) {
         StorageReference storageRef = storage.getReference();
-        StorageReference imagesRef = storageRef.child("images/" + name + ".jpg");
+        String prefix = isUserImage ? "users-images/" : "images/";
+        StorageReference imagesRef = storageRef.child(prefix + name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();

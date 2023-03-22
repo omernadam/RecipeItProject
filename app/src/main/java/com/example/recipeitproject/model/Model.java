@@ -33,9 +33,9 @@ public class Model {
     private HashMap<String, String> categoryIdsByNames = new HashMap<>();
     private HashMap<String, String> categoryNamesByIds = new HashMap<>();
     private LiveData<List<Recipe>> recipes;
-    private HashMap<String, LiveData<List<Recipe>>> categoryRecipes = new HashMap<>();
+    private HashMap<String, LiveData<List<Recipe>>> recipesByCategoryId = new HashMap<>();
     private LiveData<List<Recipe>> userRecipes;
-    private LiveData<List<Recipe>> categoryUserRecipes;
+    private HashMap<String, LiveData<List<Recipe>>> userRecipesByCategoryId = new HashMap<>();
 
     private Model() {
     }
@@ -73,7 +73,15 @@ public class Model {
 
     public void createUser(User user, Listener<Void> listener) {
         firebaseModel.createUser(user, (Void) -> {
+            usersByIds.put(user.getId(), user);
             setCurrentUser(user);
+            listener.onComplete(null);
+        });
+    }
+
+    public void updateUser(User user, Listener<Void> listener) {
+        usersByIds.put(user.getId(), user);
+        firebaseModel.updateUser(user, (Void) -> {
             listener.onComplete(null);
         });
     }
@@ -108,6 +116,10 @@ public class Model {
         return categoryNamesByIds.get(id);
     }
 
+    public List<String> getCategoriesIds() {
+        return new ArrayList<>(categoryNamesByIds.keySet());
+    }
+
     public List<String> getCategoriesNames() {
         return new ArrayList<>(categoryNamesByIds.values());
     }
@@ -134,10 +146,10 @@ public class Model {
     }
 
     public LiveData<List<Recipe>> getCategoryRecipes(String categoryId) {
-        if (!categoryRecipes.containsKey(categoryId)) {
-            categoryRecipes.put(categoryId, localDb.recipeDao().getCategoryRecipes(categoryId));
+        if (!recipesByCategoryId.containsKey(categoryId)) {
+            recipesByCategoryId.put(categoryId, localDb.recipeDao().getCategoryRecipes(categoryId));
         }
-        return categoryRecipes.get(categoryId);
+        return recipesByCategoryId.get(categoryId);
     }
 
     public LiveData<List<Recipe>> getUserRecipes(String userId) {
@@ -148,10 +160,10 @@ public class Model {
     }
 
     public LiveData<List<Recipe>> getCategoryUserRecipes(String userId, String categoryId) {
-        if (categoryUserRecipes == null) {
-            categoryUserRecipes = localDb.recipeDao().getCategoryUserRecipes(userId, categoryId);
+        if (!userRecipesByCategoryId.containsKey(categoryId)) {
+            userRecipesByCategoryId.put(categoryId, localDb.recipeDao().getCategoryUserRecipes(userId, categoryId));
         }
-        return categoryUserRecipes;
+        return userRecipesByCategoryId.get(categoryId);
     }
 
     public void refreshAllRecipes() {
@@ -196,8 +208,8 @@ public class Model {
         });
     }
 
-    public void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {
-        firebaseModel.uploadImage(name, bitmap, listener);
+    public void uploadImage(String name, Bitmap bitmap, Boolean isUserImage, Listener<String> listener) {
+        firebaseModel.uploadImage(name, bitmap, isUserImage, listener);
     }
 
     public void logOut() {

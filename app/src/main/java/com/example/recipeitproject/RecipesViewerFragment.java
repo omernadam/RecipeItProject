@@ -35,6 +35,12 @@ public class RecipesViewerFragment extends Fragment {
     String categoryId = "";
     String userId = "";
 
+    private LiveData<List<Recipe>> getScreenRecipes() {
+        return isInHomeScreen
+                ? viewModel.getData()
+                : viewModel.getUserData(userId);
+    }
+
     private LiveData<List<Recipe>> getRecipesToShow() {
         return isInHomeScreen
                 ? (
@@ -77,6 +83,10 @@ public class RecipesViewerFragment extends Fragment {
                     }
             );
         } else {
+            Model.instance().getCategoriesIds().forEach(id -> {
+                viewModel.getCategoryUserData(userId, id).observe(getViewLifecycleOwner(), list -> {
+                });
+            });
             createDropList(dropdown);
         }
         recipesToShow = getRecipesToShow().getValue();
@@ -94,8 +104,6 @@ public class RecipesViewerFragment extends Fragment {
                 Recipe recipe = recipesToShow.get(pos);
                 intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
                 startActivity(intent);
-//                StudentsListFragmentDirections.ActionStudentsListFragmentToBlueFragment action = StudentsListFragmentDirections.actionStudentsListFragmentToBlueFragment(st.name);
-//                Navigation.findNavController(view).navigate(action);
             }
         });
 
@@ -119,7 +127,7 @@ public class RecipesViewerFragment extends Fragment {
 
         binding.progressBar.setVisibility(View.GONE);
 
-        viewModel.getData().observe(getViewLifecycleOwner(), list -> {
+        getScreenRecipes().observe(getViewLifecycleOwner(), list -> {
             if (categoryId.equals("")) {
                 adapter.setData(list);
             }

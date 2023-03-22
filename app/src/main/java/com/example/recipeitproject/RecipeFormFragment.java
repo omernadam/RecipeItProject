@@ -44,7 +44,6 @@ public class RecipeFormFragment extends Fragment {
         if (recipeToEdit == null) {
             Model.instance().addRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe added successfully");
-//                        Navigation.findNavController(view1).popBackStack();
                 requireActivity().finish();
             });
         } else {
@@ -52,7 +51,6 @@ public class RecipeFormFragment extends Fragment {
             recipeToEdit = recipe;
             Model.instance().updateRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe updated successfully");
-//                        Navigation.findNavController(view1).popBackStack();
                 requireActivity().finish();
             });
         }
@@ -134,7 +132,7 @@ public class RecipeFormFragment extends Fragment {
                     binding.recipeImg.buildDrawingCache();
                     Bitmap bitmap = ((BitmapDrawable) binding.recipeImg.getDrawable()).getBitmap();
 
-                    Model.instance().uploadImage(imageName, bitmap, url -> {
+                    Model.instance().uploadImage(imageName, bitmap, false, url -> {
                         if (url != null) {
                             recipe.setImageUrl(url);
                         }
@@ -154,9 +152,7 @@ public class RecipeFormFragment extends Fragment {
         });
 
         binding.cancelBtn.setOnClickListener(view1 -> {
-//            Navigation.findNavController(view1).popBackStack(R.id.studentsListFragment,false));
             requireActivity().finish();
-
         });
 
         binding.cameraButton.setOnClickListener(view1 -> {
