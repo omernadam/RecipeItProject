@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.User;
@@ -94,7 +95,8 @@ public class myProfileScreen extends AppCompatActivity {
 
         save_button.setOnClickListener(view1 -> {
             String username = username_et.getText().toString();
-            if (username.length() > 0) {
+            Boolean isUsernameExist = Model.instance().isUsernameNotExist(username);
+            if (username.length() > 0 && isUsernameExist) {
                 user.setUsername(username);
                 if (isImageSelected) {
                     userImg.setDrawingCacheEnabled(true);
@@ -117,7 +119,13 @@ public class myProfileScreen extends AppCompatActivity {
                     });
                 }
             } else {
-                username_et.setError("Required");
+                if (username.length() == 0) {
+                    username_et.setError("Required");
+                }
+                else {
+                    Toast.makeText(this, "Username already exists",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

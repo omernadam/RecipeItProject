@@ -102,6 +102,7 @@ public class RecipesViewerFragment extends Fragment {
             @Override
             public void onItemClick(int pos) {
                 Recipe recipe = recipesToShow.get(pos);
+                System.out.println(recipe.getTitle());
                 intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
                 startActivity(intent);
             }

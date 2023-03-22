@@ -48,7 +48,6 @@ public class RecipeFormFragment extends Fragment {
             });
         } else {
             recipe.setId(recipeToEdit.getId());
-            recipeToEdit = recipe;
             Model.instance().updateRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe updated successfully");
                 requireActivity().finish();
@@ -124,7 +123,7 @@ public class RecipeFormFragment extends Fragment {
             if (title.length() > 0 && description.length() > 0) {
                 String categoryId = Model.instance().getCategoryIdByName(categoryName);
                 String userId = Model.instance().getCurrentUser().getId();
-                String imageName = userId + '-' + title;
+                String imageName = userId + '-' + title + '-' + categoryName;
                 Recipe recipe = new Recipe(title, categoryId, description, userId);
 
                 if (isImageSelected) {
