@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.User;
@@ -87,8 +88,10 @@ public class SignupScreen extends AppCompatActivity {
             String username = usernameEt.getText().toString();
             String email = emailEt.getText().toString();
             String password = passwordEt.getText().toString();
+            String userExistingDetail = Model.instance().areUsernameOrEmailNotExist(username, email);
 
-            if (username.length() > 0 && email.length() > 0 && password.length() > 0) {
+            if (username.length() > 0 && email.length() > 0 && password.length() > 0 && userExistingDetail.equals("")
+            ) {
                 User user = new User(username, email, password);
                 if (isImageSelected) {
                     userImg.setDrawingCacheEnabled(true);
@@ -121,7 +124,10 @@ public class SignupScreen extends AppCompatActivity {
                 if (password.length() < 6) {
                     passwordEt.setError("Must have more than 5 characters");
                 }
-
+                if (!userExistingDetail.equals("")) {
+                    Toast.makeText(this, userExistingDetail + " already exists",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

@@ -85,6 +85,10 @@ public class RecipesViewerFragment extends Fragment {
         } else {
             Model.instance().getCategoriesIds().forEach(id -> {
                 viewModel.getCategoryUserData(userId, id).observe(getViewLifecycleOwner(), list -> {
+                    if (categoryId.equals(id)) {
+                        recipesToShow = list;
+                        adapter.setData(list);
+                    }
                 });
             });
             createDropList(dropdown);
@@ -129,6 +133,7 @@ public class RecipesViewerFragment extends Fragment {
 
         getScreenRecipes().observe(getViewLifecycleOwner(), list -> {
             if (categoryId.equals("")) {
+                recipesToShow = list;
                 adapter.setData(list);
             }
         });

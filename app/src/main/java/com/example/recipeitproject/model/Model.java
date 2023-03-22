@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Model {
     private static final Model _instance = new Model();
@@ -106,6 +107,25 @@ public class Model {
 
     public String getUsernameById(String id) {
         return Objects.requireNonNull(usersByIds.get(id)).getUsername();
+    }
+
+    public Boolean isUsernameNotExist(String username) {
+        return usersByIds.values()
+                .stream().noneMatch(user -> username.equals(user.getUsername()));
+    }
+
+    public String areUsernameOrEmailNotExist(String username, String email) {
+        AtomicReference<String> existingDetail = new AtomicReference<>("");
+        usersByIds.values().forEach(user -> {
+                            if (username.equals(user.getUsername())) {
+                                existingDetail.set("Username");
+                            }
+                            if (email.equals(user.getEmail())) {
+                                existingDetail.set("Email");
+                            }
+                        }
+                );
+        return existingDetail.get();
     }
 
     public String getCategoryIdByName(String name) {
