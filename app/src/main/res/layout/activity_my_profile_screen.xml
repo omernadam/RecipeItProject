@@ -64,9 +64,9 @@
         android:id="@+id/username_my_profile_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="108dp"
         android:text="Username"
-        android:layout_marginTop="40dp"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
@@ -75,60 +75,13 @@
         android:id="@+id/username_my_profile_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="96dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintHorizontal_bias="0.475"
         app:layout_constraintStart_toEndOf="@+id/username_my_profile_tv"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
-
-    <TextView
-        android:id="@+id/email_my_profile_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="48dp"
-        android:text="Email"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/email_my_profile_et"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_my_profile_tv" />
-
-    <EditText
-        android:id="@+id/email_my_profile_et"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="44dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_my_profile_et" />
-
-    <TextView
-        android:id="@+id/password_my_profile_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:text="Password"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/my_profile_editTextPassword"
-        app:layout_constraintHorizontal_bias="0.231"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_my_profile_tv" />
-
-    <EditText
-        android:id="@+id/my_profile_editTextPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="44dp"
-        android:ems="10"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_my_profile_et" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/my_profile_save_btn"

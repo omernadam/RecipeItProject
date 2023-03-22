@@ -42,8 +42,6 @@ public class myProfileScreen extends AppCompatActivity {
         ImageButton cameraButton = findViewById(R.id.cameraButton);
         ImageButton galleryButton = findViewById(R.id.galleryButton);
         EditText username_et = findViewById(R.id.username_my_profile_et);
-        EditText email_et = findViewById(R.id.email_my_profile_et);
-        EditText password_et = findViewById(R.id.my_profile_editTextPassword);
         Button save_button = findViewById(R.id.my_profile_save_btn);
 
         if(user.getImageUrl().equals("")) {
@@ -54,8 +52,7 @@ public class myProfileScreen extends AppCompatActivity {
         }
 
         username_et.setText(user.getUsername());
-        email_et.setText(user.getEmail());
-        password_et.setText(user.getPassword());
+
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), new ActivityResultCallback<Bitmap>() {
             @Override
