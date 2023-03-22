@@ -20,16 +20,5 @@ public class my_recipe_edit_screen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_recipe_edit_screen);
-
-        createDropList();
-    }
-
-    private void createDropList() {
-        Spinner dropdown = findViewById(R.id.my_recipe_edit_screen_recipe_type_spinner);
-        List<String> categoriesNames = Model.instance().getCategoriesNames();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categoriesNames);
-        dropdown.setAdapter(adapter);
-        dropdown.setSelection(0);
     }
 }

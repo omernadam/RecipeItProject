@@ -1,20 +1,35 @@
 package com.example.recipeitproject.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+import com.example.recipeitproject.MyApplication;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
 public class Recipe implements Parcelable, Serializable {
 
-    private String id;
-    private String title;
-    private String categoryId;
-    private String description;
-    private String imageUrl;
-    private String userId;
+    @PrimaryKey
+    @NonNull
+    public String id = "";
+    public String title = "";
+    public String categoryId = "";
+    public String description = "";
+    public String imageUrl = "";
+    public String userId = "";
+    public Long lastUpdated;
 
     static final String COLLECTION = "recipes";
     static final String ID = "id";
@@ -23,15 +38,18 @@ public class Recipe implements Parcelable, Serializable {
     static final String DESCRIPTION = "description";
     static final String IMAGE_URL = "imageUrl";
     static final String USER_ID = "userId";
+    static final String LAST_UPDATED = "lastUpdated";
+    static final String LOCAL_LAST_UPDATED = "recipes_local_last_update";
 
+    @Ignore
     public Recipe(String title, String categoryId, String description, String userId) {
         this.title = title;
         this.categoryId = categoryId;
         this.description = description;
         this.userId = userId;
-        this.imageUrl = "";
     }
 
+    @Ignore
     public Recipe(String title, String categoryId, String description, String imageUrl, String userId) {
         this(title, categoryId, description, userId);
         this.imageUrl = imageUrl;
@@ -42,6 +60,7 @@ public class Recipe implements Parcelable, Serializable {
         this.id = id;
     }
 
+    @Ignore
     protected Recipe(Parcel in) {
         id = in.readString();
         title = in.readString();
@@ -63,6 +82,7 @@ public class Recipe implements Parcelable, Serializable {
         }
     };
 
+    @NonNull
     public String getId() {
         return id;
     }
@@ -87,13 +107,19 @@ public class Recipe implements Parcelable, Serializable {
         return imageUrl;
     }
 
-    public String getUserId() { return userId; }
+    public String getUserId() {
+        return userId;
+    }
+
+    public Long getLastUpdated() {
+        return lastUpdated;
+    }
 
     public String getUsername() {
         return Model.instance().getUsernameById(userId);
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
@@ -113,6 +139,10 @@ public class Recipe implements Parcelable, Serializable {
         this.imageUrl = imageUrl;
     }
 
+    public void setLastUpdated(Long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
     public static Recipe fromJson(Map<String, Object> json) {
         String id = (String) json.get(ID);
         String title = (String) json.get(TITLE);
@@ -121,6 +151,12 @@ public class Recipe implements Parcelable, Serializable {
         String image = (String) json.get(IMAGE_URL);
         String userId = (String) json.get(USER_ID);
         Recipe recipe = new Recipe(id, title, categoryId, description, image, userId);
+        try {
+            Timestamp time = (Timestamp) json.get(LAST_UPDATED);
+            recipe.setLastUpdated(time.getSeconds());
+        } catch (Exception e) {
+
+        }
 
         return recipe;
     }
@@ -133,8 +169,21 @@ public class Recipe implements Parcelable, Serializable {
         json.put(DESCRIPTION, getDescription());
         json.put(IMAGE_URL, getImageUrl());
         json.put(USER_ID, getUserId());
+        json.put(LAST_UPDATED, FieldValue.serverTimestamp());
 
         return json;
+    }
+
+    public static Long getLocalLastUpdate() {
+        SharedPreferences sharedPref = MyApplication.getMyContext().getSharedPreferences("TAG", Context.MODE_PRIVATE);
+        return sharedPref.getLong(LOCAL_LAST_UPDATED, 0);
+    }
+
+    public static void setLocalLastUpdate(Long time) {
+        SharedPreferences sharedPref = MyApplication.getMyContext().getSharedPreferences("TAG", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putLong(LOCAL_LAST_UPDATED, time);
+        editor.commit();
     }
 
     @Override

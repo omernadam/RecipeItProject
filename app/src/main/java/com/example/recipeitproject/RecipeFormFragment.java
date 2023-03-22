@@ -36,11 +36,14 @@ public class RecipeFormFragment extends Fragment {
     String categoryName;
     Boolean isImageSelected = false;
 
+    private void handleDeleteButtonAppearance(Boolean toShow) {
+        binding.deletionButton.setVisibility(toShow ? View.VISIBLE : View.INVISIBLE);
+    }
+
     private void handleRecipeAction(Recipe recipe) {
         if (recipeToEdit == null) {
             Model.instance().addRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe added successfully");
-//                        Navigation.findNavController(view1).popBackStack();
                 requireActivity().finish();
             });
         } else {
@@ -48,7 +51,6 @@ public class RecipeFormFragment extends Fragment {
             recipeToEdit = recipe;
             Model.instance().updateRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe updated successfully");
-//                        Navigation.findNavController(view1).popBackStack();
                 requireActivity().finish();
             });
         }
@@ -64,6 +66,7 @@ public class RecipeFormFragment extends Fragment {
                 if (result != null) {
                     binding.recipeImg.setImageBitmap(result);
                     isImageSelected = true;
+                    handleDeleteButtonAppearance(true);
                 }
             }
         });
@@ -73,6 +76,7 @@ public class RecipeFormFragment extends Fragment {
                 if (result != null) {
                     binding.recipeImg.setImageURI(result);
                     isImageSelected = true;
+                    handleDeleteButtonAppearance(true);
                 }
             }
         });
@@ -97,10 +101,21 @@ public class RecipeFormFragment extends Fragment {
             if (recipeToEdit.getImageUrl() != null && recipeToEdit.getImageUrl().length() > 5) {
                 Picasso.get().load(recipeToEdit.getImageUrl()).placeholder(R.drawable.noimage).into(binding.recipeImg);
                 isImageSelected = true;
+                handleDeleteButtonAppearance(true);
+
             } else {
                 binding.recipeImg.setImageResource(R.drawable.noimage);
+                handleDeleteButtonAppearance(false);
             }
+        } else {
+            handleDeleteButtonAppearance(false);
         }
+
+        binding.deletionButton.setOnClickListener(view1 -> {
+            binding.recipeImg.setImageResource(R.drawable.noimage);
+            isImageSelected = false;
+            handleDeleteButtonAppearance(false);
+        });
 
         binding.saveBtn.setOnClickListener(view1 -> {
             String title = binding.titleEt.getText().toString();
@@ -117,7 +132,7 @@ public class RecipeFormFragment extends Fragment {
                     binding.recipeImg.buildDrawingCache();
                     Bitmap bitmap = ((BitmapDrawable) binding.recipeImg.getDrawable()).getBitmap();
 
-                    Model.instance().uploadImage(imageName, bitmap, url -> {
+                    Model.instance().uploadImage(imageName, bitmap, false, url -> {
                         if (url != null) {
                             recipe.setImageUrl(url);
                         }
@@ -137,9 +152,7 @@ public class RecipeFormFragment extends Fragment {
         });
 
         binding.cancelBtn.setOnClickListener(view1 -> {
-//            Navigation.findNavController(view1).popBackStack(R.id.studentsListFragment,false));
             requireActivity().finish();
-
         });
 
         binding.cameraButton.setOnClickListener(view1 -> {
@@ -164,7 +177,7 @@ public class RecipeFormFragment extends Fragment {
         return view;
     }
 
-    public void createDropList(Spinner dropdown) {
+    private void createDropList(Spinner dropdown) {
         List<String> categoriesNames = Model.instance().getCategoriesNames();
         categoryName = categoriesNames.get(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, categoriesNames);

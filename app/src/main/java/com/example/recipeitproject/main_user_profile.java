@@ -17,12 +17,6 @@ public class main_user_profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_user_profile);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-        String username = Model.instance().getCurrentUser().getUsername();
-        TextView usernameTv = findViewById(R.id.user_name_tv);
-        usernameTv.setText(username);
         Button my_profile_button = findViewById(R.id.my_profile_btn);
         Button my_recipes_button = findViewById(R.id.my_recipes_btn);
         Button log_out_button = findViewById(R.id.log_out_btn);
@@ -44,11 +38,20 @@ public class main_user_profile extends AppCompatActivity {
             }
         });
 
-        log_out_button.setOnClickListener((view)->{
+        log_out_button.setOnClickListener((view) -> {
             logout();
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String username = Model.instance().getCurrentUser().getUsername();
+        TextView usernameTv = findViewById(R.id.user_name_tv);
+        usernameTv.setText(username);
+    }
+
 
     private void logout() {
 

@@ -1,18 +1,33 @@
 package com.example.recipeitproject;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.User;
+import com.squareup.picasso.Picasso;
 
 public class myProfileScreen extends AppCompatActivity {
+    ActivityResultLauncher<Void> cameraLauncher;
+    ActivityResultLauncher<String> galleryLauncher;
+    Boolean isImageSelected = false;
+    ImageButton deletionButton;
+
+    private void handleDeleteButtonAppearance(Boolean toShow) {
+        deletionButton.setVisibility(toShow ? View.VISIBLE : View.INVISIBLE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,40 +37,87 @@ public class myProfileScreen extends AppCompatActivity {
         //Display the current user details
         User user = Model.instance().getCurrentUser();
 
+        ImageView userImg = findViewById(R.id.userImg);
+        deletionButton = findViewById(R.id.deletionButton);
+        ImageButton cameraButton = findViewById(R.id.cameraButton);
+        ImageButton galleryButton = findViewById(R.id.galleryButton);
         EditText username_et = findViewById(R.id.username_my_profile_et);
         EditText email_et = findViewById(R.id.email_my_profile_et);
         EditText password_et = findViewById(R.id.my_profile_editTextPassword);
+        Button save_button = findViewById(R.id.my_profile_save_btn);
+
+        if(user.getImageUrl().equals("")) {
+            handleDeleteButtonAppearance(false);
+        } else {
+            Picasso.get().load(user.getImageUrl()).placeholder(R.drawable.noimage).into(userImg);
+            isImageSelected = true;
+        }
 
         username_et.setText(user.getUsername());
         email_et.setText(user.getEmail());
         password_et.setText(user.getPassword());
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
-        Intent mainScreenIntent = new Intent(this, MainScreenApp.class);
-
-
-
-        Button save_button = findViewById(R.id.my_profile_save_btn);
-
-        save_button.setOnClickListener(new View.OnClickListener() {
+        cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), new ActivityResultCallback<Bitmap>() {
             @Override
-            public void onClick(View view) {
-                String newUserName = username_et.getText().toString();
-                String email = email_et.getText().toString();
-                Model.instance().updateUserName(email, newUserName, new Model.Listener<Void>() {
-                    @Override
-                    public void onComplete(Void data) {
-                        // Handle the update completion
-                        Toast.makeText(myProfileScreen.this, "Username updated successfully", Toast.LENGTH_SHORT).show();
-                        username_et.setText(newUserName);
-                        startActivity(mainScreenIntent);
-                        Model.instance().setCurrentUser(Model.instance().getCurrentUser());
-                        System.out.println(Model.instance().getCurrentUser().getUsername());
-                    }
-                });
+            public void onActivityResult(Bitmap result) {
+                if (result != null) {
+                    userImg.setImageBitmap(result);
+                    isImageSelected = true;
+                    handleDeleteButtonAppearance(true);
+                }
+            }
+        });
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri result) {
+                if (result != null) {
+                    userImg.setImageURI(result);
+                    isImageSelected = true;
+                    handleDeleteButtonAppearance(true);
+                }
+            }
+        });
+
+        deletionButton.setOnClickListener(view1 -> {
+            userImg.setImageResource(R.drawable.noimage);
+            isImageSelected = false;
+            handleDeleteButtonAppearance(false);
+        });
+
+        cameraButton.setOnClickListener(view1 -> {
+            cameraLauncher.launch(null);
+        });
+
+        galleryButton.setOnClickListener(view1 -> {
+            galleryLauncher.launch("image/*");
+        });
+
+        save_button.setOnClickListener(view1 -> {
+            String username = username_et.getText().toString();
+            if (username.length() > 0) {
+                user.setUsername(username);
+                if (isImageSelected) {
+                    userImg.setDrawingCacheEnabled(true);
+                    userImg.buildDrawingCache();
+                    Bitmap bitmap = ((BitmapDrawable) userImg.getDrawable()).getBitmap();
+                    String imageName = username + "-" + user.getEmail();
+
+                    Model.instance().uploadImage(imageName, bitmap, true, url -> {
+                        if (url != null) {
+                            user.setImageUrl(url);
+                        }
+                        Model.instance().updateUser(user, (unused) -> {
+                            finish();
+                        });
+                    });
+                } else {
+                    user.setImageUrl("");
+                    Model.instance().updateUser(user, (unused) -> {
+                        finish();
+                    });
+                }
+            } else {
+                username_et.setError("Required");
             }
         });
 

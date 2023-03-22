@@ -25,6 +25,9 @@ public class MainScreenApp extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen_app);
 
         Button profile_button = findViewById(R.id.profile_btn);
+        User user = Model.instance().getCurrentUser();
+        String profileNickname = String.valueOf(user.getUsername().charAt(0));
+        profile_button.setText(profileNickname);
         profile_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,11 +46,6 @@ public class MainScreenApp extends AppCompatActivity {
 
         bundle = new Bundle();
         bundle.putBoolean(RecipesViewerFragment.IS_IN_HOME_SCREEN, true);
-
-        Button profileBtn = findViewById(R.id.profile_btn);
-        User user = Model.instance().getCurrentUser();
-        String profileNickname = String.valueOf(user.getUsername().charAt(0));
-        profileBtn.setText(profileNickname);
 
         if (savedInstanceState == null) {
             RecipesViewerFragment fragment = new RecipesViewerFragment();

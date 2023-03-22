@@ -3,17 +3,18 @@ package com.example.recipeitproject.model;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.core.os.HandlerCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class Model {
     private static final Model _instance = new Model();
@@ -24,13 +25,17 @@ public class Model {
 
     private Executor executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = HandlerCompat.createAsync(Looper.getMainLooper());
-
     private FirebaseModel firebaseModel = new FirebaseModel();
+    AppLocalDbRepository localDb = AppLocalDb.getAppDb();
+
     private User loggedUser = null;
     private HashMap<String, User> usersByIds = new HashMap<>();
     private HashMap<String, String> categoryIdsByNames = new HashMap<>();
     private HashMap<String, String> categoryNamesByIds = new HashMap<>();
-    List<Recipe> recipes = new LinkedList<>();
+    private LiveData<List<Recipe>> recipes;
+    private HashMap<String, LiveData<List<Recipe>>> recipesByCategoryId = new HashMap<>();
+    private LiveData<List<Recipe>> userRecipes;
+    private HashMap<String, LiveData<List<Recipe>>> userRecipesByCategoryId = new HashMap<>();
 
     private Model() {
     }
@@ -38,6 +43,14 @@ public class Model {
     public interface Listener<T> {
         void onComplete(T data);
     }
+
+    public enum LoadingState {
+        LOADING,
+        NOT_LOADING
+    }
+
+    final public MutableLiveData<LoadingState> EventRecipesListLoadingState = new MutableLiveData<LoadingState>(LoadingState.NOT_LOADING);
+
 
     public void fetchLoggedUser(Listener<Void> listener) {
         executor.execute(() -> {
@@ -60,7 +73,15 @@ public class Model {
 
     public void createUser(User user, Listener<Void> listener) {
         firebaseModel.createUser(user, (Void) -> {
+            usersByIds.put(user.getId(), user);
             setCurrentUser(user);
+            listener.onComplete(null);
+        });
+    }
+
+    public void updateUser(User user, Listener<Void> listener) {
+        usersByIds.put(user.getId(), user);
+        firebaseModel.updateUser(user, (Void) -> {
             listener.onComplete(null);
         });
     }
@@ -95,6 +116,10 @@ public class Model {
         return categoryNamesByIds.get(id);
     }
 
+    public List<String> getCategoriesIds() {
+        return new ArrayList<>(categoryNamesByIds.keySet());
+    }
+
     public List<String> getCategoriesNames() {
         return new ArrayList<>(categoryNamesByIds.values());
     }
@@ -111,49 +136,83 @@ public class Model {
         firebaseModel.getCategories(idsByNames, namesByIds);
     }
 
-    public List<Recipe> getAllRecipes() {
+    public LiveData<List<Recipe>> getAllRecipes() {
+        if (recipes == null) {
+            recipes = localDb.recipeDao().getAll();
+            refreshAllRecipes();
+        }
+
         return recipes;
     }
 
-    public void setRecipes(List<Recipe> list) {
-        recipes = list;
+    public LiveData<List<Recipe>> getCategoryRecipes(String categoryId) {
+        if (!recipesByCategoryId.containsKey(categoryId)) {
+            recipesByCategoryId.put(categoryId, localDb.recipeDao().getCategoryRecipes(categoryId));
+        }
+        return recipesByCategoryId.get(categoryId);
+    }
+
+    public LiveData<List<Recipe>> getUserRecipes(String userId) {
+        if (userRecipes == null) {
+            userRecipes = localDb.recipeDao().getUserRecipes(userId);
+        }
+        return userRecipes;
+    }
+
+    public LiveData<List<Recipe>> getCategoryUserRecipes(String userId, String categoryId) {
+        if (!userRecipesByCategoryId.containsKey(categoryId)) {
+            userRecipesByCategoryId.put(categoryId, localDb.recipeDao().getCategoryUserRecipes(userId, categoryId));
+        }
+        return userRecipesByCategoryId.get(categoryId);
+    }
+
+    public void refreshAllRecipes() {
+        EventRecipesListLoadingState.setValue(LoadingState.LOADING);
+        // get local last update
+        Long localLastUpdate = Recipe.getLocalLastUpdate();
+        // get all updated records from firebase since local last update
+        firebaseModel.getAllRecipesSince(localLastUpdate, list -> {
+            executor.execute(() -> {
+                Log.d("TAG", "firebase return : " + list.size());
+                Long time = localLastUpdate;
+                for (Recipe recipe : list) {
+                    // insert new records into ROOM
+                    localDb.recipeDao().insertAll(recipe);
+                    if (time < recipe.getLastUpdated()) {
+                        time = recipe.getLastUpdated();
+                    }
+                }
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // update local last update
+                Recipe.setLocalLastUpdate(time);
+                EventRecipesListLoadingState.postValue(LoadingState.NOT_LOADING);
+            });
+        });
     }
 
     public void addRecipe(Recipe recipe, Listener<Void> listener) {
-        recipes.add(recipe);
         firebaseModel.addRecipe(recipe, (Void) -> {
-//            refresh
+            refreshAllRecipes();
             listener.onComplete(null);
         });
     }
 
     public void updateRecipe(Recipe recipe, Listener<Void> listener) {
-        recipes.forEach(rc -> {
-            if (rc.getId().equals(recipe.getId())) {
-
-            }
-        });
         firebaseModel.updateRecipe(recipe, (Void) -> {
-//            refresh
+            refreshAllRecipes();
             listener.onComplete(null);
         });
     }
 
-    public void fetchRecipes(Listener<List<Recipe>> callback) {
-        firebaseModel.getRecipes(callback);
+    public void uploadImage(String name, Bitmap bitmap, Boolean isUserImage, Listener<String> listener) {
+        firebaseModel.uploadImage(name, bitmap, isUserImage, listener);
     }
 
-    public List<Recipe> getUserRecipes(String userId) {
-        return recipes.stream()
-                .filter(recipe -> userId.equals(recipe.getUserId()))
-                .collect(Collectors.toList());
-    }
-
-    public void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {
-        firebaseModel.uploadImage(name, bitmap, listener);
-    }
-
-    public void logOut(){
+    public void logOut() {
         setCurrentUser(null);
         firebaseModel.logOutUser();
     }

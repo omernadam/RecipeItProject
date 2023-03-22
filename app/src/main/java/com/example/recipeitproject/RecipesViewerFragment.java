@@ -13,9 +13,8 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.recipeitproject.databinding.FragmentRecipesViewerBinding;
@@ -23,27 +22,38 @@ import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.Recipe;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecipesViewerFragment extends Fragment {
-
     static final String IS_IN_HOME_SCREEN = "isInHomeScreen";
     final String ALL_CATEGORIES_FILTER = "All";
 
     FragmentRecipesViewerBinding binding;
     RecipeRecyclerAdapter adapter;
+    RecipesViewerFragmentViewModel viewModel;
     Boolean isInHomeScreen = true;
     List<Recipe> recipesToShow;
+    String categoryId = "";
     String userId = "";
-    NavController navController;
 
-    private List<Recipe> getRecipesToShow() {
-        if (isInHomeScreen)
-            return Model.instance().getAllRecipes();
-        return Model.instance().getUserRecipes(userId);
+    private LiveData<List<Recipe>> getScreenRecipes() {
+        return isInHomeScreen
+                ? viewModel.getData()
+                : viewModel.getUserData(userId);
     }
 
-
+    private LiveData<List<Recipe>> getRecipesToShow() {
+        return isInHomeScreen
+                ? (
+                categoryId.equals("")
+                        ? viewModel.getData()
+                        : viewModel.getCategoryData(categoryId)
+        )
+                : (
+                categoryId.equals("")
+                        ? viewModel.getUserData(userId)
+                        : viewModel.getCategoryUserData(userId, categoryId)
+        );
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,33 +63,33 @@ public class RecipesViewerFragment extends Fragment {
         View view = binding.getRoot();
         Spinner dropdown = view.findViewById(R.id.recipe_type_spinner);
 
-
-
-
-
         userId = Model.instance().getCurrentUser().getId();
-        Model.instance().fetchCategories(
-                idsByNames -> {
-                    Model.instance().setCategoriesIdsByNames(idsByNames);
-                },
-                namesByIds -> {
-                    Model.instance().setCategoriesNamesByIds(namesByIds);
-                    createDropList(dropdown);
-                }
-        );
-
         if (getArguments() != null) {
             isInHomeScreen = getArguments().getBoolean(IS_IN_HOME_SCREEN);
         }
 
-        Model.instance().fetchRecipes(recipes -> {
-            Model.instance().setRecipes(recipes);
-            recipesToShow = recipes;
-
-            if (!isInHomeScreen) {
-                recipesToShow = Model.instance().getUserRecipes(userId);
-            }
-        });
+        if (isInHomeScreen) {
+            Model.instance().fetchCategories(
+                    idsByNames -> {
+                        Model.instance().setCategoriesIdsByNames(idsByNames);
+                    },
+                    namesByIds -> {
+                        Model.instance().setCategoriesNamesByIds(namesByIds);
+                        namesByIds.keySet().forEach(id -> {
+                            viewModel.getCategoryData(id).observe(getViewLifecycleOwner(), list -> {
+                            });
+                        });
+                        createDropList(dropdown);
+                    }
+            );
+        } else {
+            Model.instance().getCategoriesIds().forEach(id -> {
+                viewModel.getCategoryUserData(userId, id).observe(getViewLifecycleOwner(), list -> {
+                });
+            });
+            createDropList(dropdown);
+        }
+        recipesToShow = getRecipesToShow().getValue();
 
         binding.recycleList.setHasFixedSize(true);
         binding.recycleList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -93,34 +103,42 @@ public class RecipesViewerFragment extends Fragment {
             public void onItemClick(int pos) {
                 Recipe recipe = recipesToShow.get(pos);
                 intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
-//                startActivity(intent);
-//                StudentsListFragmentDirections.ActionStudentsListFragmentToBlueFragment action = StudentsListFragmentDirections.actionStudentsListFragmentToBlueFragment(st.name);
-
-                NavHostFragment navHostFragment =
-                        (NavHostFragment) getParentFragmentManager().findFragmentById(R.id.main_navhost);
-                navController = navHostFragment.getNavController();
-                navController.navigate(R.id.action_global_recipeFormFragment);
+                startActivity(intent);
             }
         });
 
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
-                recipesToShow = getRecipesToShow();
                 String categoryName = (String) parent.getItemAtPosition(pos);
+                categoryId = !categoryName.equals(ALL_CATEGORIES_FILTER)
+                        ? Model.instance().getCategoryIdByName(categoryName)
+                        : "";
 
-                if (!categoryName.equals(ALL_CATEGORIES_FILTER)) {
-                    String categoryId = Model.instance().getCategoryIdByName(categoryName);
-                    recipesToShow = recipesToShow.stream()
-                            .filter(recipe -> categoryId.equals(recipe.getCategoryId()))
-                            .collect(Collectors.toList());
-                }
+                recipesToShow = getRecipesToShow().getValue();
                 adapter.setData(recipesToShow);
+                binding.recycleList.scrollToPosition(0);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
+        });
+
+        binding.progressBar.setVisibility(View.GONE);
+
+        getScreenRecipes().observe(getViewLifecycleOwner(), list -> {
+            if (categoryId.equals("")) {
+                adapter.setData(list);
+            }
+        });
+
+        Model.instance().EventRecipesListLoadingState.observe(getViewLifecycleOwner(), status -> {
+            binding.swipeRefresh.setRefreshing(status == Model.LoadingState.LOADING);
+        });
+
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            reloadData();
         });
 
         return view;
@@ -129,15 +147,14 @@ public class RecipesViewerFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        // viewModel = new ViewModelProvider(this).get(StudentsListFragmentViewModel.class);
+        viewModel = new ViewModelProvider(this).get(RecipesViewerFragmentViewModel.class);
     }
 
     void reloadData() {
-//        binding.progressBar.setVisibility(View.VISIBLE);
-        // Model.instance().refreshAllStudents();
+        Model.instance().refreshAllRecipes();
     }
 
-    public void createDropList(Spinner dropdown) {
+    private void createDropList(Spinner dropdown) {
         List<String> categoriesNames = Model.instance().getCategoriesNames();
         categoriesNames.add(0, ALL_CATEGORIES_FILTER);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, categoriesNames);

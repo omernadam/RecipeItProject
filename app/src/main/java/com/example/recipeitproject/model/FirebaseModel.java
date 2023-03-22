@@ -10,13 +10,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -114,6 +117,16 @@ public class FirebaseModel {
                 });
     }
 
+    public void updateUser(User user, Model.Listener<Void> listener) {
+        db.collection(User.COLLECTION).document(user.getId()).set(user.toJson())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.onComplete(null);
+                    }
+                });
+    }
+
     public void loginUser(String email, String password, Model.Listener<Void> success, Model.Listener<Void> error) {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -171,8 +184,9 @@ public class FirebaseModel {
                 });
     }
 
-    public void getRecipes(Model.Listener<List<Recipe>> callback) {
+    public void getAllRecipesSince(Long since, Model.Listener<List<Recipe>> callback) {
         db.collection(Recipe.COLLECTION)
+                .whereGreaterThanOrEqualTo(Recipe.LAST_UPDATED, new Timestamp(since, 0))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -233,13 +247,14 @@ public class FirebaseModel {
                 });
     }
 
-    public void logOutUser(){
+    public void logOutUser() {
         auth.signOut();
     }
 
-    void uploadImage(String name, Bitmap bitmap, Model.Listener<String> listener) {
+    void uploadImage(String name, Bitmap bitmap, Boolean isUserImage, Model.Listener<String> listener) {
         StorageReference storageRef = storage.getReference();
-        StorageReference imagesRef = storageRef.child("images/" + name + ".jpg");
+        String prefix = isUserImage ? "users-images/" : "images/";
+        StorageReference imagesRef = storageRef.child(prefix + name + ".jpg");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
