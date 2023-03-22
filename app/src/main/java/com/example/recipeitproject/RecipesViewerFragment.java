@@ -99,7 +99,7 @@ public class RecipesViewerFragment extends Fragment {
                 NavHostFragment navHostFragment =
                         (NavHostFragment) getParentFragmentManager().findFragmentById(R.id.main_navhost);
                 navController = navHostFragment.getNavController();
-                navController.navigate(R.id.action_recipesViewerFragment_to_recipeFormFragment);
+                navController.navigate(R.id.action_global_recipeFormFragment);
             }
         });
 

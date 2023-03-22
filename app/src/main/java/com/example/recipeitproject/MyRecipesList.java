@@ -28,9 +28,9 @@ public class MyRecipesList extends AppCompatActivity {
         Intent intent = new Intent(this, AddRecipe_temp_activity.class);
         ImageButton addBtn = findViewById(R.id.btnAdd);
         addBtn.setOnClickListener(view -> {
-//            startActivity(intent);
+               //startActivity(intent);
 //            Navigation.findNavController(view).navigate(R.id.action_global_recipeFormFragment);
-            navController.navigate(R.id.action_global_recipeFormFragment);
+            navController.navigate(R.id.action_recipesViewerFragment_to_recipeFormFragment);
         });
 
         bundle = new Bundle();
