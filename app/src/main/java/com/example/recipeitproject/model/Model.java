@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class Model {
     private static final Model _instance = new Model();
@@ -117,14 +118,14 @@ public class Model {
     public String areUsernameOrEmailNotExist(String username, String email) {
         AtomicReference<String> existingDetail = new AtomicReference<>("");
         usersByIds.values().forEach(user -> {
-                            if (username.equals(user.getUsername())) {
-                                existingDetail.set("Username");
-                            }
-                            if (email.equals(user.getEmail())) {
-                                existingDetail.set("Email");
-                            }
-                        }
-                );
+                    if (username.equals(user.getUsername())) {
+                        existingDetail.set("Username");
+                    }
+                    if (email.equals(user.getEmail())) {
+                        existingDetail.set("Email");
+                    }
+                }
+        );
         return existingDetail.get();
     }
 
@@ -184,6 +185,19 @@ public class Model {
             userRecipesByCategoryId.put(categoryId, localDb.recipeDao().getCategoryUserRecipes(userId, categoryId));
         }
         return userRecipesByCategoryId.get(categoryId);
+    }
+
+    public Boolean isUserRecipeNotExist(String title, String categoryId) {
+        return userRecipes.getValue().stream().noneMatch(recipe ->
+                title.equals(recipe.getTitle()) && categoryId.equals(recipe.getCategoryId())
+        );
+    }
+
+    public Boolean isUserRecipeNotExist(String id, String title, String categoryId) {
+        return userRecipes.getValue().stream().noneMatch(recipe ->
+                !id.equals(recipe.getId()) &&
+                        title.equals(recipe.getTitle()) && categoryId.equals(recipe.getCategoryId())
+        );
     }
 
     public void refreshAllRecipes() {

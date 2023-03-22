@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 
 import com.example.recipeitproject.databinding.FragmentRecipeFormBinding;
 import com.example.recipeitproject.model.Model;
@@ -96,6 +98,7 @@ public class RecipeFormFragment extends Fragment {
             binding.titleEt.setText(recipeToEdit.getTitle());
             binding.descriptionEt.setText(recipeToEdit.getDescription());
             binding.categorySpinner.setSelection(Integer.parseInt(recipeToEdit.getCategoryId()) - 1);
+            categoryName = Model.instance().getCategoryNameById(recipeToEdit.getCategoryId());
 
             if (recipeToEdit.getImageUrl() != null && recipeToEdit.getImageUrl().length() > 5) {
                 Picasso.get().load(recipeToEdit.getImageUrl()).placeholder(R.drawable.noimage).into(binding.recipeImg);
@@ -119,9 +122,12 @@ public class RecipeFormFragment extends Fragment {
         binding.saveBtn.setOnClickListener(view1 -> {
             String title = binding.titleEt.getText().toString();
             String description = binding.descriptionEt.getText().toString();
+            String categoryId = Model.instance().getCategoryIdByName(categoryName);
+            Boolean isUserRecipeNotExist = (recipeToEdit == null)
+                    ? Model.instance().isUserRecipeNotExist(title, categoryId)
+                    : Model.instance().isUserRecipeNotExist(recipeToEdit.getId(), title, categoryId);
 
-            if (title.length() > 0 && description.length() > 0) {
-                String categoryId = Model.instance().getCategoryIdByName(categoryName);
+            if (title.length() > 0 && description.length() > 0 && isUserRecipeNotExist) {
                 String userId = Model.instance().getCurrentUser().getId();
                 String imageName = userId + '-' + title + '-' + categoryName;
                 Recipe recipe = new Recipe(title, categoryId, description, userId);
@@ -146,6 +152,9 @@ public class RecipeFormFragment extends Fragment {
                 }
                 if (description.length() == 0) {
                     binding.descriptionEt.setError("Required");
+                }
+                if (!isUserRecipeNotExist) {
+                    binding.titleEt.setError("Already exists");
                 }
             }
         });
