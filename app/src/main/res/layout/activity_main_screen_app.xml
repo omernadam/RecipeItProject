@@ -18,15 +18,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteY="4dp" />
 
-    <Button
-        android:id="@+id/fav_icon"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:textColorLink="#090909"
-        android:textSize="24sp"
-        app:cornerRadius="28dp"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_recipes_list"
-        app:layout_constraintStart_toEndOf="@+id/main_screen_title" />
 
     <TextView
         android:id="@+id/main_screen_title"
@@ -41,6 +32,16 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/fav_icon"
+        android:layout_width="62dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_recipes_list"

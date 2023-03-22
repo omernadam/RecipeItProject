@@ -22,7 +22,8 @@
         </activity>
         <activity
             android:name=".MyRecipesList"
-            android:exported="true">
+            android:exported="true"
+            android:parentActivityName=".MainScreenApp">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -65,14 +66,16 @@
 
         <activity
             android:name=".myProfileScreen"
-            android:exported="true">
+            android:exported="true"
+            android:parentActivityName=".main_user_profile">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".main_user_profile"
-            android:exported="true">
+            android:exported="true"
+            android:parentActivityName=".MainScreenApp">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

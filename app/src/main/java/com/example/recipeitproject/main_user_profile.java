@@ -21,6 +21,8 @@ public class main_user_profile extends AppCompatActivity {
         Button my_recipes_button = findViewById(R.id.my_recipes_btn);
         Button log_out_button = findViewById(R.id.log_out_btn);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         my_profile_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

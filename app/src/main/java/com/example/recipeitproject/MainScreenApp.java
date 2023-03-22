@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.User;
@@ -16,6 +17,8 @@ import com.example.recipeitproject.model.User;
 public class MainScreenApp extends AppCompatActivity {
 
     Bundle bundle;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,8 @@ public class MainScreenApp extends AppCompatActivity {
             }
         });
 
-        Button fav_icon = findViewById(R.id.fav_icon);
+
+        ImageView fav_icon = findViewById(R.id.fav_icon);
         fav_icon.setOnClickListener((view -> {
             Intent intent = new Intent(MainScreenApp.this, RecipeFetcher.class);
             startActivity(intent);
