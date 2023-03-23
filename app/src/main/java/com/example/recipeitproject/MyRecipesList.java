@@ -1,23 +1,28 @@
 package com.example.recipeitproject;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageButton;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-public class MyRecipesList extends AppCompatActivity {
+import com.example.recipeitproject.databinding.ActivityMyRecipesListBinding;
+
+public class MyRecipesList extends Fragment {
     Bundle bundle;
+    ActivityMyRecipesListBinding binding;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_recipes_list);
+        binding = ActivityMyRecipesListBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
-        Intent intent = new Intent(this, AddRecipe_temp_activity.class);
-        ImageButton addBtn = findViewById(R.id.btnAdd);
-        addBtn.setOnClickListener(view -> {
-            startActivity(intent);
+        binding.btnAdd.setOnClickListener(view1 -> {
+            Navigation.findNavController(view).navigate(R.id.action_MyRecipesList_to_RecipeFormFragment);
         });
 
         bundle = new Bundle();
@@ -26,9 +31,11 @@ public class MyRecipesList extends AppCompatActivity {
         if (savedInstanceState == null) {
             RecipesViewerFragment fragment = new RecipesViewerFragment();
             fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction()
+            getParentFragmentManager().beginTransaction()
                     .add(R.id.fragment_recipes_list, fragment)
                     .commit();
         }
+
+        return view;
     }
 }

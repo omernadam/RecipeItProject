@@ -34,7 +34,7 @@ public class main_user_profile extends AppCompatActivity {
         my_recipes_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myRecipesIntent = new Intent(main_user_profile.this, MyRecipesList.class);
+                Intent myRecipesIntent = new Intent(main_user_profile.this, MyRecipes.class);
                 startActivity(myRecipesIntent);
 
             }

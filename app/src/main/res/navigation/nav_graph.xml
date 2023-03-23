@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/MyRecipesList">
+
+    <fragment
+        android:id="@+id/MyRecipesList"
+        android:name="com.example.recipeitproject.MyRecipesList"
+        android:label="My Recipes"
+        tools:layout="@layout/activity_my_recipes_list">
+        <action
+            android:id="@+id/action_MyRecipesList_to_RecipeFormFragment"
+            app:destination="@id/RecipeFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/RecipeFormFragment"
+        android:name="com.example.recipeitproject.RecipeFormFragment"
+        android:label="Recipe Editor"
+        tools:layout="@layout/fragment_recipe_form" >
+        <argument
+            android:name="recipeToEdit"
+            app:argType="com.example.recipeitproject.model.Recipe"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+</navigation>

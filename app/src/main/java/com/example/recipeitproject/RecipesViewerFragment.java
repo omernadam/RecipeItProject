@@ -1,9 +1,7 @@
 package com.example.recipeitproject;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.recipeitproject.databinding.FragmentRecipesViewerBinding;
@@ -100,14 +99,14 @@ public class RecipesViewerFragment extends Fragment {
         adapter = new RecipeRecyclerAdapter(getLayoutInflater(), recipesToShow, isInHomeScreen);
         binding.recycleList.setAdapter(adapter);
 
-        Intent intent = new Intent(getContext(), UpdateRecipe_temp_activity.class);
-
         adapter.setOnItemClickListener(new RecipeRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
                 Recipe recipe = recipesToShow.get(pos);
-                intent.putExtra(RecipeFormFragment.RECIPE_TO_EDIT, (Parcelable) recipe);
-                startActivity(intent);
+                MyRecipesListDirections.ActionMyRecipesListToRecipeFormFragment action =
+                        MyRecipesListDirections.actionMyRecipesListToRecipeFormFragment();
+                action.setRecipeToEdit(recipe);
+                Navigation.findNavController(view).navigate(action);
             }
         });
 

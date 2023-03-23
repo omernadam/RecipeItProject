@@ -11,14 +11,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
+import androidx.navigation.Navigation;
 
 import com.example.recipeitproject.databinding.FragmentRecipeFormBinding;
 import com.example.recipeitproject.model.Model;
@@ -42,17 +41,17 @@ public class RecipeFormFragment extends Fragment {
         binding.deletionButton.setVisibility(toShow ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void handleRecipeAction(Recipe recipe) {
+    private void handleRecipeAction(Recipe recipe, View view1) {
         if (recipeToEdit == null) {
             Model.instance().addRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe added successfully");
-                requireActivity().finish();
+                Navigation.findNavController(view1).popBackStack();
             });
         } else {
             recipe.setId(recipeToEdit.getId());
             Model.instance().updateRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe updated successfully");
-                requireActivity().finish();
+                Navigation.findNavController(view1).popBackStack();
             });
         }
     }
@@ -93,8 +92,8 @@ public class RecipeFormFragment extends Fragment {
         Spinner categoriesDropdown = view.findViewById(R.id.categorySpinner);
         createDropList(categoriesDropdown);
 
-        if (getArguments() != null) {
-            recipeToEdit = getArguments().getParcelable(RECIPE_TO_EDIT);
+        recipeToEdit = RecipeFormFragmentArgs.fromBundle(getArguments()).getRecipeToEdit();
+        if (recipeToEdit != null) {
             binding.titleEt.setText(recipeToEdit.getTitle());
             binding.descriptionEt.setText(recipeToEdit.getDescription());
             binding.categorySpinner.setSelection(Integer.parseInt(recipeToEdit.getCategoryId()) - 1);
@@ -141,10 +140,10 @@ public class RecipeFormFragment extends Fragment {
                         if (url != null) {
                             recipe.setImageUrl(url);
                         }
-                        handleRecipeAction(recipe);
+                        handleRecipeAction(recipe, view1);
                     });
                 } else {
-                    handleRecipeAction(recipe);
+                    handleRecipeAction(recipe, view1);
                 }
             } else {
                 if (title.length() == 0) {
@@ -160,7 +159,7 @@ public class RecipeFormFragment extends Fragment {
         });
 
         binding.cancelBtn.setOnClickListener(view1 -> {
-            requireActivity().finish();
+            Navigation.findNavController(view1).popBackStack();
         });
 
         binding.cameraButton.setOnClickListener(view1 -> {
