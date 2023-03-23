@@ -11,14 +11,7 @@ import android.widget.ImageView;
 import com.example.recipeitproject.model.Model;
 import com.example.recipeitproject.model.User;
 
-
-//includes the fragment of the list
-
 public class MainScreenApp extends AppCompatActivity {
-
-    Bundle bundle;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,25 +30,11 @@ public class MainScreenApp extends AppCompatActivity {
             }
         });
 
-
         ImageView fav_icon = findViewById(R.id.fav_icon);
         fav_icon.setOnClickListener((view -> {
             Intent intent = new Intent(MainScreenApp.this, RecipeFetcher.class);
             startActivity(intent);
             finish();
         }));
-
-
-
-        bundle = new Bundle();
-        bundle.putBoolean(RecipesViewerFragment.IS_IN_HOME_SCREEN, true);
-
-        if (savedInstanceState == null) {
-            RecipesViewerFragment fragment = new RecipesViewerFragment();
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_recipes_list, fragment)
-                    .commit();
-        }
     }
 }

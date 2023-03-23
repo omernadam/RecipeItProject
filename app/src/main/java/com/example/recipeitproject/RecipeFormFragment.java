@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.example.recipeitproject.databinding.FragmentRecipeFormBinding;
 import com.example.recipeitproject.model.Model;
@@ -40,17 +41,17 @@ public class RecipeFormFragment extends Fragment {
         binding.deletionButton.setVisibility(toShow ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void handleRecipeAction(Recipe recipe) {
+    private void handleRecipeAction(Recipe recipe, View view1) {
         if (recipeToEdit == null) {
             Model.instance().addRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe added successfully");
-                requireActivity().finish();
+                Navigation.findNavController(view1).popBackStack();
             });
         } else {
             recipe.setId(recipeToEdit.getId());
             Model.instance().updateRecipe(recipe, (unused) -> {
                 Log.d("TAG", "Recipe updated successfully");
-                requireActivity().finish();
+                Navigation.findNavController(view1).popBackStack();
             });
         }
     }
@@ -91,11 +92,12 @@ public class RecipeFormFragment extends Fragment {
         Spinner categoriesDropdown = view.findViewById(R.id.categorySpinner);
         createDropList(categoriesDropdown);
 
-        if (getArguments() != null) {
-            recipeToEdit = getArguments().getParcelable(RECIPE_TO_EDIT);
+        recipeToEdit = RecipeFormFragmentArgs.fromBundle(getArguments()).getRecipeToEdit();
+        if (recipeToEdit != null) {
             binding.titleEt.setText(recipeToEdit.getTitle());
             binding.descriptionEt.setText(recipeToEdit.getDescription());
             binding.categorySpinner.setSelection(Integer.parseInt(recipeToEdit.getCategoryId()) - 1);
+            categoryName = Model.instance().getCategoryNameById(recipeToEdit.getCategoryId());
 
             if (recipeToEdit.getImageUrl() != null && recipeToEdit.getImageUrl().length() > 5) {
                 Picasso.get().load(recipeToEdit.getImageUrl()).placeholder(R.drawable.noimage).into(binding.recipeImg);
@@ -119,9 +121,12 @@ public class RecipeFormFragment extends Fragment {
         binding.saveBtn.setOnClickListener(view1 -> {
             String title = binding.titleEt.getText().toString();
             String description = binding.descriptionEt.getText().toString();
+            String categoryId = Model.instance().getCategoryIdByName(categoryName);
+            Boolean isUserRecipeNotExist = (recipeToEdit == null)
+                    ? Model.instance().isUserRecipeNotExist(title, categoryId)
+                    : Model.instance().isUserRecipeNotExist(recipeToEdit.getId(), title, categoryId);
 
-            if (title.length() > 0 && description.length() > 0) {
-                String categoryId = Model.instance().getCategoryIdByName(categoryName);
+            if (title.length() > 0 && description.length() > 0 && isUserRecipeNotExist) {
                 String userId = Model.instance().getCurrentUser().getId();
                 String imageName = userId + '-' + title + '-' + categoryName;
                 Recipe recipe = new Recipe(title, categoryId, description, userId);
@@ -135,10 +140,10 @@ public class RecipeFormFragment extends Fragment {
                         if (url != null) {
                             recipe.setImageUrl(url);
                         }
-                        handleRecipeAction(recipe);
+                        handleRecipeAction(recipe, view1);
                     });
                 } else {
-                    handleRecipeAction(recipe);
+                    handleRecipeAction(recipe, view1);
                 }
             } else {
                 if (title.length() == 0) {
@@ -147,11 +152,14 @@ public class RecipeFormFragment extends Fragment {
                 if (description.length() == 0) {
                     binding.descriptionEt.setError("Required");
                 }
+                if (!isUserRecipeNotExist) {
+                    binding.titleEt.setError("Already exists");
+                }
             }
         });
 
         binding.cancelBtn.setOnClickListener(view1 -> {
-            requireActivity().finish();
+            Navigation.findNavController(view1).popBackStack();
         });
 
         binding.cameraButton.setOnClickListener(view1 -> {
